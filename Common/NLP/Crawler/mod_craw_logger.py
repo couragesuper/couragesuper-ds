@@ -1,0 +1,54 @@
+import os
+from xml.etree import ElementTree as ET
+
+def indent(elem, level=0):
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+class Crawler_Logger :
+    def __init__(self, filename, isDebug ) :
+        self.filename = filename
+        self.isDebug  = isDebug
+        if( os.path.exists( filename ) == True ) :
+            if (self.isDebug): print("[Crawler_Logger] open existed file")
+            self.xmltree = ET.parse(filename)
+            self.xmlroot = self.xmltree.getroot()
+        else :
+            if (self.isDebug): print("[Crawler_Logger] create new file")
+            self.xmlroot = ET.Element('root')
+        history_node = self.xmlroot.find('histories')
+        if (self.isDebug): print("[Crawler_Logger] history node:", history_node )
+        if( history_node == None) :
+            ET.SubElement( self.xmlroot , 'histories' )
+    def updateHistory( self, url , ret ) :
+        node_his = self.xmlroot.find("histories")
+        # this makes to be easyily find url elements
+        node_history = node_his.find("history[@url='%s']" % (url) )
+        if( ret == False ) : szRet = "False"
+        else : szRet = "True"
+        if( node_history == None ) :
+            node_history = ET.SubElement( node_his , 'history' )
+            node_history.attrib['url'] = url
+            if (self.isDebug): print("[Crawler_Logger] history node:", node_history.attrib)
+        node_history.attrib['ret'] = szRet
+    def getHistory(self , url ):
+        node_his = self.xmlroot.find("histories")
+        node_history = node_his.find("history[@url='%s']" % (url))
+        if( (node_history != None) and (node_history.attrib['ret'] == "True") ) :
+            return True
+        return False;
+    def close(self) :
+        indent(self.xmlroot)
+        tree = ET.ElementTree(self.xmlroot)
+        tree.write(self.filename, encoding='utf-8', xml_declaration=True)
