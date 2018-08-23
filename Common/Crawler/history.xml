@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<root>
-  <histories>
-    <history ret="False" url="aaaa1" />
-    <history ret="True" url="aaaa2" />
-    <history ret="False" url="aaaa3" />
-    <history ret="True" url="aaaa4" />
-  </histories>
-</root>

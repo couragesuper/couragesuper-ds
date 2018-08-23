@@ -1,22 +1,39 @@
 from selenium import webdriver
 import time
+import os
+import sys
 from time import sleep
 from mod_craw_logger import Crawler_Logger as LOGGER
 from mod_craw_filewriter import crawler_filewriter as FT
 
-path_chrome_driver_linux = "/root/chromedriver/chromedriver"
-path_chrome_driver_win   = "C:/Users/couragesuper/PycharmProjects/SampleProject/venv\crawler\lib/chromedriver.exe"
+sys.path.append("../../Util")
+
+from Util import helpPlatform
+
+path_chrome_driver_linux = "/lib/chromedriver"
+path_chrome_driver_win   = "\\lib\\chromedriver.exe"
 
 class crawler_base :
-    def __init__( self , isLinux, isHidden, keyword_en ) :
+    def __init__( self , isHidden, keyword_en ) :
+        helperPlatform = helpPlatform()
+
+        if( helperPlatform.platform == "linux" ) :
+            self.isLinux = True
+            self.isHidden = True
+        elif ( helperPlatform.platform == "win" ) :
+            self.isLinux = False
+            self.isHidden = isHidden
+
         self.isLogger = False
         self.isTxt    = False
         self.createLogger(keyword_en , True)
         self.createTxt(keyword_en)
+        curPath = os.path.dirname( os.path.abspath(__file__))
         if (isLinux):
             self.path_chrome_driver = path_chrome_driver_linux
         else:
             self.path_chrome_driver = path_chrome_driver_win
+        print( "path_chrome_driver=" , curPath + self.path_chrome_driver )
         if (isHidden):
             self.options = webdriver.ChromeOptions()
             self.options.add_argument('--headless')
