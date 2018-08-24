@@ -1,4 +1,5 @@
 from selenium import webdriver
+import platform
 import time
 import os
 import sys
@@ -6,34 +7,40 @@ from time import sleep
 from mod_craw_logger import Crawler_Logger as LOGGER
 from mod_craw_filewriter import crawler_filewriter as FT
 
-sys.path.append("../Util")
-
-from Util import helpPlatform
-
 path_chrome_driver_linux = "/lib/chromedriver"
 path_chrome_driver_win   = "\\lib\\chromedriver.exe"
 
-class crawler_base :
-    def __init__( self , isHidden, keyword_en ) :
-        helperPlatform = helpPlatform()
+def get_platform():
+    if platform.system() == 'Linux' :
+        return "linux"
+    elif platform.system() == 'Darwin' :
+        return "apple"
+    elif platform.system() == "Windows" :
+        return "win"
+    return "unknown"
 
-        if( helperPlatform.platform == "linux" ) :
+class crawler_base :
+    def __init__( self , isHidden, outDir , title ) :
+        szPlatform = get_platform()
+        print( "[crawler_base] platform is identified with {} ".format(szPlatform) );
+        if( szPlatform == "linux" ) :
             self.isLinux = True
             self.isHidden = True
-        elif ( helperPlatform.platform == "win" ) :
+        elif ( szPlatform == "win" ) :
             self.isLinux = False
-            self.isHidden = isHidden
-
+            self.isHidden = isHidden            
         self.isLogger = False
         self.isTxt    = False
-        self.createLogger(keyword_en , True)
-        self.createTxt(keyword_en)
+        self.createLogger( outDir + "/"  + title , True )
+        self.createTxt( outDir + "/" + title)
         curPath = os.path.dirname( os.path.abspath(__file__))
         if (self.isLinux):
             self.path_chrome_driver = curPath + path_chrome_driver_linux
         else:
             self.path_chrome_driver = curPath + path_chrome_driver_win
+        print( "[crawler_base] path of chrome driver is {} ".format( self.path_chrome_driver ) );
         if (self.isHidden):
+            print( "[crawler_base] chromdriver option is hidden" );
             self.options = webdriver.ChromeOptions()
             self.options.add_argument('--headless')
             self.options.add_argument('--window-size=1920x1080')
@@ -43,11 +50,11 @@ class crawler_base :
         else:
             self.webDrv = webdriver.Chrome(self.path_chrome_driver)
         self.delay_dn = 1.5
-    def createLogger( self , nameLogger , isDebug):
-        self.logger = LOGGER( nameLogger +".xml" , isDebug)
+    def createLogger( self , pathnameLogger , isDebug):
+        self.logger = LOGGER( pathnameLogger +".xml" , isDebug)
         self.isLogger = True
-    def createTxt( self , nameTxt ):
-        self.txt = FT( nameTxt + ".txt")
+    def createTxt( self , pathnameTxt ):
+        self.txt = FT( pathnameTxt + ".txt")
         self.isTxt = True
     def setTxtColumn(self, listTxt ):
         for i,elem in enumerate( listTxt ):
@@ -57,10 +64,11 @@ class crawler_base :
         if( self.isLogger ) : self.logger.close()
         if( self.isTxt) : self.txt.close()
     def openPage(self, URL, delay=2.0):
-        print( "  openpage = {}".format( URL ) )
+        print( "  [crawler_base] openPage = {}".format( URL ) )
         self.webDrv.get(URL)
         self.webDrv.implicitly_wait(delay)
     def run(self , mainUrl ):
+        print( "  [crawler_base] run()" )
         self.openPage(mainUrl)
         self.login()
         self.makeCateLinks()

@@ -1,8 +1,9 @@
 import sys
 import time
-sys.path.append("C:/Users/couragesuper/PycharmProjects/SampleProject/venv/Common/Crawler")
 
-import mod_craw as craw
+sys.path.append("../Common")
+
+#import mod_craw as 
 from mod_craw_logger import Crawler_Logger as LOGGER
 from mod_craw_filewriter import crawler_filewriter as FT
 from mod_crawler_base import crawler_base as crawler_main
@@ -15,12 +16,11 @@ path_chrome_driver_win   = "C:/Users/couragesuper/PycharmProjects/SampleProject/
 szKeyword    = "키워드로 보는 사설"
 szKeyword_En = "Keywordsasul"
 
-
 #book cosmos용 entity checker이다.
-class crawler_joins_keyword (crawler_main):
+class crawler_joins_kwd (crawler_main):
     def __init__( self , isLinux, isHidden, keyword_en, keyword ) :
         self.keyword = keyword
-        super().__init__(isLinux,isHidden, keyword_en)
+        super().__init__(isHidden, keyword_en)
     def run(self):
         baseUrl = "https://news.joins.com/find/list?IsDuplicate=True&key=EditorialColumn&Keyword=%s&SourceGroupType=Joongang" % (self.keyword)
         super().run( baseUrl )
@@ -106,14 +106,10 @@ class crawler_joins_keyword (crawler_main):
         if (isShowContent): print(txt_proc)
         self.txt.writeLast(txt_proc)
 
-
 if False :
     MOD = crawler_joins_keyword( False, False, "joins_keywordNSasul" , "키워드로 보는 사설" )
-else :
-    MOD = crawler_joins_keyword(False, False, "Joins_Sasul", "사설")
-
-MOD.run()
-MOD.close()
+    MOD.run()
+    MOD.close()
 
 
 
