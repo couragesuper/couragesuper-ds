@@ -1,38 +1,37 @@
 import sys
 import time
+sys.path.append("../Common/Crawler")
+sys.path.append("../Common/Util")
 
-sys.path.append("../Common")
-
-#import mod_craw as 
-from mod_craw_logger import Crawler_Logger as LOGGER
-from mod_craw_filewriter import crawler_filewriter as FT
-from mod_crawler_base import crawler_base as crawler_main
+from mod_crawler_base import craw_base
 from time import sleep
 from selenium import webdriver
-
-path_chrome_driver_linux = "/root/chromedriver/chromedriver"
-path_chrome_driver_win   = "C:/Users/couragesuper/PycharmProjects/SampleProject/venv\crawler\lib/chromedriver.exe"
 
 szKeyword    = "키워드로 보는 사설"
 szKeyword_En = "Keywordsasul"
 
+# joins
+    # histroy
+    #   20180827 : using unified common library
+    #   20180828 : add try ~ except in navigates pages
+
 #book cosmos용 entity checker이다.
-class crawler_joins_kwd (crawler_main):
-    def __init__( self , isLinux, isHidden, keyword_en, keyword ) :
+class crawler_joins_kwd (craw_base):
+    def __init__( self , isHidden, outdir, title, keyword ) :
         self.keyword = keyword
-        super().__init__(isHidden, keyword_en)
+        super().__init__(isHidden, outdir, title)
     def run(self):
         baseUrl = "https://news.joins.com/find/list?IsDuplicate=True&key=EditorialColumn&Keyword=%s&SourceGroupType=Joongang" % (self.keyword)
         super().run( baseUrl )
     def naviSites(self):
         baseUrl = "https://news.joins.com/find/list?page=%d&IsDuplicate=True&key=EditorialColumn&Keyword=%s&SourceGroupType=Joongang" % (1, self.keyword)
-        self.openPage(baseUrl)
-        self.navigate(baseUrl)
+        self.openPage( baseUrl )
+        self.navigate( baseUrl )
         sleep(1)
     def getMaxPages(self):
         baseUrl = "https://news.joins.com/find/list?page=1&IsDuplicate=True&key=EditorialColumn&Keyword=%s&SourceGroupType=Joongang" % (self.keyword)
         css_name = "btn_next"
-        self.openPage(baseUrl)
+        self.openPage( baseUrl )
         while (True):
             elem = self.webDrv.find_element_by_class_name(css_name)
             pos = elem.text.find("없음")
@@ -64,17 +63,24 @@ class crawler_joins_kwd (crawler_main):
             print("text file isnt configured.")
             return
         for i, elem in enumerate(listElem):
-            listLink.append(elem.find_element_by_tag_name('a').get_attribute('href'))
+            try :
+                listLink.append(elem.find_element_by_tag_name('a').get_attribute('href'))
+            except :
+                print( "[navigatePage] get_attribue in elem .. {}".format(elem.text) )
+                continue
         for i, elem in enumerate(listLink):
             url = listLink[i]
             if( self.logger.getHistory(url) == False ) :
                 try:
+                    print("[history]add new page")
                     start_time = time.time()
                     self.openPage(url)
                     self.crawContents(True)
                     self.logger.updateHistory(url, "ok")
                 except:
+                    print("")
                     self.logger.updateHistory(url, "fail")
+            else : print("[history]this page is already added.")
             sleep(1)
         self.logger.close()
     def crawContents(self,isShowContent):
@@ -106,10 +112,26 @@ class crawler_joins_kwd (crawler_main):
         if (isShowContent): print(txt_proc)
         self.txt.writeLast(txt_proc)
 
-if False :
-    MOD = crawler_joins_keyword( False, False, "joins_keywordNSasul" , "키워드로 보는 사설" )
+isKwdSasul = False
+isSasul    = True
+isBunsudae = False
+
+#키워드로 보는 사설
+if isKwdSasul == True :
+    MOD = crawler_joins_kwd( False , "../Data/Text/Joins" , "joins_keywordNSasul" , "키워드로 보는 사설" )
     MOD.run()
     MOD.close()
+elif isBunsudae == True :
+    MOD = crawler_joins_kwd( False, "../Data/Text/Joins", "Bunsudae", "분수대" )
+    MOD.run()
+    MOD.close()
+elif isSasul == True :
+    MOD = crawler_joins_kwd( False, "../Data/Text/Joins", "Sasul", "사설" )
+    MOD.run()
+    MOD.close()
+
+
+
 
 
 

@@ -1,158 +1,111 @@
 import sys
 import time
-sys.path.append("C:/Users/couragesuper/PycharmProjects/SampleProject/venv/Common")
+sys.path.append("../Common/Crawler")
+sys.path.append("../Common/Util")
 
-from Crawler import mod_craw as craw
-from Crawler.mod_craw_logger import Crawler_Logger as logger
+from mod_crawler_base import craw_base
 from time import sleep
+from selenium import webdriver
 
-class craw_joins_keyword :
-    def __init__( self, keyword, filename, logger_name, maxpage = 0):
-        self.keyword  = keyword
-        self.filename = filename
-        self.logger_name = logger_name
-        self.webdriver = craw.InitWebDriver(False, False)
-        self.isShowContent = True
-        self.maxpage = maxpage
-        self.delay_between_page = 1
-    def get_maxpage( self ):
-        baseUrl = "https://news.joins.com/find/list?page=1&Keyword=%s&SourceGroupType=Joongang" % ( self.keyword )
-        css_name = "btn_next"
-        craw.OpenWebPage(self.webdriver, baseUrl, 1)
-        self.max_page = 0
-        while (True):
-            elem = self.webdriver.find_element_by_class_name(css_name)
-            pos = elem.text.find("없음")
-            if (pos == -1):
-                print("다음페이지 있음")
-                elem.click()
-            else:
-                print("다음페이지 없음")
-                elems = self.webdriver.find_elements_by_class_name('link_page')
-                listPages = []
-                for eobj in elems:
-                    listPages.append(int(eobj.text))
-                listPages = sorted(listPages, reverse=True)
-                self.max_page = listPages[0]
-                break
-            sleep( self.delay_between_page )
-    def crawling( self):
-        self.get_maxpage()
-        print( "keyword = {} , maxpage = {}".format(self.keyword, self.max_page) )
-        if( self.max_page > 0 ) :
-            for i in range(1,self.max_page + 1) :
-                self.craw_page( i )
-    def craw_page( self, page ):
-        logger_craw = logger( self.logger_name , False)
-        with open( self.filename , "a+", encoding='utf-8') as f:
+szKeyword    = "주간 조선"
+szTitle      = "WeeklyChosun"
+
+# histroy
+#   20180827 : using unified common library
+
+#book cosmos용 entity checker이다.
+class crawler_chosunweek (craw_base):
+    def __init__( self , isHidden, outdir, title, keyword ) :
+        list = []
+        self.keyword = keyword
+        super().__init__(isHidden, outdir, title)
+    def run(self):
+        StartUrl = "http://weekly.chosun.com/client/news/passho.asp"
+        super().run( StartUrl )
+    def makeCateLinks(self):
+        classNo = "ac"
+        elem = self.webDrv.find_element_by_class_name(classNo)
+        self.max_page = int( elem.text.split("호")[0] )
+        print( "[Crawler][ChosunWeekly] maximum page = {}".format( self.max_page ) )
+        # Hueristic value
+        self.min_page = 2092
+        return
+    def naviSites(self):
+        #iterative the series specified number
+        for page in range( self.max_page , self.min_page , -1 ) :
+            print( "[Crawler][ChosunWeekly] page={}".format( page ) )
+            SeriesUrl = "http://weekly.chosun.com/client/news/alllst.asp?nHo=%d" % (page)
+            self.openPage( SeriesUrl )
+            self.navigate( SeriesUrl )
+            self.logger.close()
+        sleep(1)
+    def navigate(self , link):
+        if False :
+            class_line = "at"
+            elem_list = self.webDrv.find_elements_by_class_name(class_line)
             listLink = []
-            baseUrl = "https://news.joins.com/find/list?page=%d&IsDuplicate=True&key=EditorialColumn&Keyword=%s&SourceGroupType=Joongang" % (page, self.keyword)
-            craw.OpenWebPage(self.webdriver, baseUrl, 1)
-            listElem = self.webdriver.find_elements_by_class_name('headline')
-            for i, elem in enumerate(listElem):
-                listLink.append(elem.find_element_by_tag_name('a').get_attribute('href'))
-            for i, elem in enumerate(listLink):
-                url = listLink[i]
-                dicRet = logger_craw.getHistory(url)
-                if ((dicRet['check'] == 'fail') or ((dicRet['check'] == 'ok') and (dicRet['ret'] == 'fail'))):
-                    try:
-                        start_time = time.time()
-                        craw.OpenWebPage(self.webdriver, listLink[i], 1)
-                        # Title
-                        elem = self.webdriver.find_element_by_id('article_title')
-                        txt_head = elem.text
-                        f.write(txt_head)
-                        f.write("\t")
-                        # Date
-                        elem = self.webdriver.find_element_by_class_name('byline')
-                        txt_date_input = elem.text.split()[2]
-                        f.write(txt_date_input)
-                        f.write("\t")
-                        # Writer
-                        elem = self.webdriver.find_element_by_class_name('profile')
-                        txt_profile = elem.text
-                        f.write(txt_profile)
-                        f.write("\t")
-                        # Tag
-                        elem = self.webdriver.find_elements_by_class_name('tag_list')
-                        listKeyword = elem[0].text.split("\n#")
-                        txt_Keyword = ""
-                        for i in range(1,len(listKeyword)) :
-                            txt_Keyword += listKeyword[i]
-                            txt_Keyword += ","
-                        f.write(txt_proc)
-                        f.write("\n")
-                        # Content
-                        elem = self.webdriver.find_element_by_class_name('article_body')
-                        txt_org = elem.text
-                        txt_proc = txt_org.replace("\n", "  ")
-                        if (isShowContent): print(txt_proc)
-                        f.write(txt_proc)
-                        f.write("\n")
-                        print("Title:%s Writer:%s interval:%d" % (txt_head, txt_profile, (time.time() - start_time)))
-                        logger_craw.updateHistory(url, "ok")
-                    except:
-                        logger_craw.updateHistory(url, "fail")
-                sleep(1)
-        logger_craw.updateXML()
+            for i, elem in enumerate(elem_list):
+                listAElem = elem.find_elements_by_tag_name('a')
+                if (len(listAElem) != 0):
+                    url = listAElem[0].get_attribute('href')
+                    print(i, elem.text, url)
+                    listLink.append(url)
+        else :
+            listAElem = self.webDrv.find_elements_by_tag_name('a')
+            listUrl = []
+            for i, elem in enumerate(listAElem):
+                url = elem.get_attribute('href')
+                # print(i, elem.text , url )
+                if (url.find("NewsNumb") != -1):
+                    print(i, elem.text, url)
+                    listUrl.append(url)
+            listLink = list(set(listUrl))
+        sleep(1)
+        for urlContent in listLink :
+            if (self.logger.getHistory(urlContent) == False):
+                try:
+                    print("[history]add new page")
+                    start_time = time.time()
+                    self.openPage(urlContent)
+                    self.crawContent(True)
+                    self.logger.updateHistory(urlContent, "ok")
+                except:
+                    print("")
+                    self.logger.updateHistory(urlContent, "fail")
+            else:
+                print("[history]this page is already added.")
+    def crawContent(self,isShowContent):
+        print("crawContents =".format(isShowContent))
+        css_title = "title_title"
+        elem = self.webDrv.find_element_by_class_name(css_title)
+        txt = elem.text.split("\n")[0]
+        print("{}={}".format(css_title, txt))
+        txt_cate = ""
+        txt_title = txt
+        if( (txt.find("[") != -1) and (txt.find("]") != -1) ) :
+            txt_cate  = txt[ txt.find("[") + 1:txt.find("]") ]
+            txt_title = txt[ txt.find("]") + 1:].lstrip()
+        self.txt.write( txt_cate )
+        self.txt.write( txt_title )
+        if( isShowContent ) : print( "title = {}".format(txt) )
+        css_author = "name_ctrl"
+        elem = self.webDrv.find_element_by_class_name(css_author)
+        txt = elem.text.split()[0]
+        print("{}={}".format(css_title, txt))
+        self.txt.write( txt )
+        if (isShowContent): print("name = {}".format(txt))
+        css_article = "article_body"
+        elem = self.webDrv.find_element_by_class_name(css_article)
+        txt = elem.text.replace("  ", "").replace("\n", "  ")
+        print("{}={}".format(css_article, txt))
+        self.txt.writeLast( txt )
+        if (isShowContent): print("content = {}".format(txt))
 
 def Main() :
-    if False :
-        craw_joins_bunsudae = craw_joins_keyword("분수대", "bunsudae.txt", "bunsudae_history.xml")
-        craw_joins_bunsudae.crawling()
-    else :
-
-        webdriver = craw.InitWebDriver(False, False)
-
-        if False :
-            StartUrl = "http://weekly.chosun.com/client/news/passho.asp"
-            classNo = "ac"
-            elem = webdriver.find_element_by_class_name(classNo)
-
-            max_page = elem.text.split("호")[0]
-            min_page = 2092
-        #for i in range( max_page, min_page - 1, -1) :
-
-        if True :
-            BaseUrl = "http://weekly.chosun.com/client/news/alllst.asp?nHo=%d" % (2200)
-            craw.OpenWebPage(webdriver, BaseUrl, 1)
-
-            class_date = "all_ho"
-            elem = webdriver.find_element_by_class_name(class_date)
-            print( "date={}".format( class_date ) )
-
-            listLink = []
-
-            for i,elem in enumerate( elem_list ):
-                listAElem = elem.find_elements_by_tag_name('a')
-                if( len(listAElem) != 0 ) :
-                    url =  listAElem[0].get_attribute('href')
-                    print(i, elem.text , url )
-                    listLink.append( url )
-            print(listLink)
-            sleep(1)
-
-            if True :
-                craw.OpenWebPage(webdriver, listLink[0], 1)
-
-                css_title = "title_title"
-                elem = webdriver.find_element_by_class_name(css_title)
-                print("{}={}".format(css_title, elem.text.split("\n")[0]))
-
-                css_author = "name_ctrl"
-                elem = webdriver.find_element_by_class_name(css_author)
-                print("{}={}".format(css_author, elem.text.split()[0]))
-
-                css_article = "article_body"
-                elem = webdriver.find_element_by_class_name(css_article)
-                # print("{}={}".format(css_article,elem.text))
-                print("{}={}".format(css_article, elem.text.replace("  ", "").replace("\n", "  ")))
-
-            if True :
-                craw.OpenWebPage( webdriver, listList[0], 1)
-
-                css_title = "title_title"
-                elem = webdriver.find_element_by_class_name(css_title)
-
+   listTxtColumn = ['title','category','writer','content']
+   mod = crawler_chosunweek(False,"../Data/Text/ChosunWeekly","WeeklyChosun_","WeeklyChosun")
+   mod.setTxtColumn( listTxtColumn )
+   mod.run()
+   mod.close()
 
 Main()
