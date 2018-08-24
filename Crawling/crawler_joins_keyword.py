@@ -1,26 +1,19 @@
 import sys
 import time
 
-sys.path.append("../Common")
-
-#import mod_craw as 
-from mod_craw_logger import Crawler_Logger as LOGGER
-from mod_craw_filewriter import crawler_filewriter as FT
+sys.path.append("../Common/Crawler")
 from mod_crawler_base import crawler_base as crawler_main
 from time import sleep
 from selenium import webdriver
-
-path_chrome_driver_linux = "/root/chromedriver/chromedriver"
-path_chrome_driver_win   = "C:/Users/couragesuper/PycharmProjects/SampleProject/venv\crawler\lib/chromedriver.exe"
 
 szKeyword    = "키워드로 보는 사설"
 szKeyword_En = "Keywordsasul"
 
 #book cosmos용 entity checker이다.
 class crawler_joins_kwd (crawler_main):
-    def __init__( self , isLinux, isHidden, keyword_en, keyword ) :
+    def __init__( self , isHidden, outdir, title, keyword ) :
         self.keyword = keyword
-        super().__init__(isHidden, keyword_en)
+        super().__init__(isHidden, outdir, title)
     def run(self):
         baseUrl = "https://news.joins.com/find/list?IsDuplicate=True&key=EditorialColumn&Keyword=%s&SourceGroupType=Joongang" % (self.keyword)
         super().run( baseUrl )
@@ -69,12 +62,15 @@ class crawler_joins_kwd (crawler_main):
             url = listLink[i]
             if( self.logger.getHistory(url) == False ) :
                 try:
+                    print("[history]add new page")
                     start_time = time.time()
                     self.openPage(url)
                     self.crawContents(True)
                     self.logger.updateHistory(url, "ok")
                 except:
+                    print("")
                     self.logger.updateHistory(url, "fail")
+            else : print("[history]this page is already added.")
             sleep(1)
         self.logger.close()
     def crawContents(self,isShowContent):
@@ -106,8 +102,10 @@ class crawler_joins_kwd (crawler_main):
         if (isShowContent): print(txt_proc)
         self.txt.writeLast(txt_proc)
 
-if False :
-    MOD = crawler_joins_keyword( False, False, "joins_keywordNSasul" , "키워드로 보는 사설" )
+isRun = True
+
+if isRun :
+    MOD = crawler_joins_kwd( False , "..\/Data/Text/Joins" , "joins_keywordNSasul" , "키워드로 보는 사설" )
     MOD.run()
     MOD.close()
 
