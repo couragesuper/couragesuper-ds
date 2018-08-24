@@ -6,7 +6,7 @@ from time import sleep
 from mod_craw_logger import Crawler_Logger as LOGGER
 from mod_craw_filewriter import crawler_filewriter as FT
 
-sys.path.append("../../Util")
+sys.path.append("../Util")
 
 from Util import helpPlatform
 
@@ -29,12 +29,11 @@ class crawler_base :
         self.createLogger(keyword_en , True)
         self.createTxt(keyword_en)
         curPath = os.path.dirname( os.path.abspath(__file__))
-        if (isLinux):
-            self.path_chrome_driver = path_chrome_driver_linux
+        if (self.isLinux):
+            self.path_chrome_driver = curPath + path_chrome_driver_linux
         else:
-            self.path_chrome_driver = path_chrome_driver_win
-        print( "path_chrome_driver=" , curPath + self.path_chrome_driver )
-        if (isHidden):
+            self.path_chrome_driver = curPath + path_chrome_driver_win
+        if (self.isHidden):
             self.options = webdriver.ChromeOptions()
             self.options.add_argument('--headless')
             self.options.add_argument('--window-size=1920x1080')

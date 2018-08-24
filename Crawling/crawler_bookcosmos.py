@@ -1,6 +1,7 @@
 import sys
 import time
-sys.path.append("../Common/NLP/Crawler")
+sys.path.append("../Common/Crawler")
+sys.path.append("../Common/Util")
 
 from mod_crawler_base import crawler_base as CRAWLER_MAIN
 from time import sleep
@@ -79,8 +80,8 @@ class crawler_bookcosmos( CRAWLER_MAIN ) :
         # get max pages
             # bookcosmos maxpage has function to go to last page , so we dont need loop
         xpath_next_btn = "/html/body/table/tbody/tr/td/table/tbody/tr[1]/td[1]/table/tbody/tr/td/table[4]/tbody/tr/td[2]/table[2]/tbody/tr/td[2]/table/tbody/tr[2]/td/a[11]/img"
-        self.webDrv.find_element_by_xpath(xpath_next_btn).click()
         xpath_last     = "/html/body/table/tbody/tr/td/table/tbody/tr[1]/td[1]/table/tbody/tr/td/table[4]/tbody/tr/td[2]/table[2]/tbody/tr/td[2]/table/tbody/tr[2]/td/strong/font"
+        self.webDrv.find_element_by_xpath(xpath_next_btn).click()
         elem           = self.webDrv.find_element_by_xpath(xpath_last)
         maxpage        = int(elem.text)
         print("\tnavigatePages : maxpage:{}".format(maxpage))
