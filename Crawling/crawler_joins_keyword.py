@@ -16,6 +16,7 @@ szKeyword_En = "Keywordsasul"
     #   20180828 : add try ~ except in navigates pages
 
 #book cosmos용 entity checker이다.
+
 class crawler_joins_kwd (craw_base):
     def __init__( self , isHidden, outdir, title, keyword ) :
         self.keyword = keyword
@@ -112,6 +113,7 @@ class crawler_joins_kwd (craw_base):
         if (isShowContent): print(txt_proc)
         self.txt.writeLast(txt_proc)
 
+
 isKwdSasul = False
 isSasul    = True
 isBunsudae = False
@@ -119,6 +121,7 @@ isBunsudae = False
 #키워드로 보는 사설
 if isKwdSasul == True :
     MOD = crawler_joins_kwd( False , "../Data/Text/Joins" , "joins_keywordNSasul" , "키워드로 보는 사설" )
+
     MOD.run()
     MOD.close()
 elif isBunsudae == True :
