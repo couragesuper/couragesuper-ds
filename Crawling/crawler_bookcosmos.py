@@ -92,7 +92,7 @@ class Crawler_Bookcosmos( craw_base ) :
             pagelink = link + "&page=%d" % (page)
             self.openPage(pagelink)
             self.navigatePage()
-            sleep(0.5)
+            sleep(1)
             print("save logger");
             self.logger.close()
     def navigatePage(self):
@@ -115,8 +115,10 @@ class Crawler_Bookcosmos( craw_base ) :
                     elem.click()
                     sleep(self.delay_dn)
                     self.logger.updateHistory(BookUrl,True)
+                    sleep(0.5)
                 else:
                     print("[history]this page is already added.")
+        sleep(0.5)
     def run(self):
         super().run("http://www.bookcosmos.com")
     def crawContents(self):

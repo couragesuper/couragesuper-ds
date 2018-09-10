@@ -2,6 +2,7 @@ from   selenium import webdriver
 import platform
 import time
 import os
+import re
 import sys
 from time      import sleep
 from xml.etree import ElementTree as ET
@@ -102,20 +103,15 @@ class craw_file_reader:
         listCols = line.replace("\n", "").split("\t")
         # print(listCols)
         self.isSentence = onlySentence
+    def setIterColumn(self , idx ):
+        self.idx = idx
     def __iter__(self):
         line = self.fobj.readline()
         while (line):
             listLine = line.split("\t")
-            if (len(listLine) == 5):
-                if (self.isSentence):
-                    for i, sent in enumerate(listLine[4].split("  ")):
-                        for sent_l2 in sent.split("."):
-                            if (sent_l2 != ""): yield sent_l2
-                else:
-                    # doc
-                    yield listLine[4]
-            else:
-                continue
+            if( self.isSentence == False ) :  yield line
+            else :
+                yield listLine[self.idx]
             line = self.fobj.readline()
 
 class craw_history_logger :
@@ -150,11 +146,72 @@ class craw_history_logger :
         node_history = node_his.find("history[@url='%s']" % (url))
         if( (node_history != None) and (node_history.attrib['ret'] == "True") ) :
             return True
-        return False;
+        return False
+    def getMaxPagesHistory(self):
+        node_max_history = self.xmlroot.find("maxpage")
+        if( node_max_history == None ) :
+            return 0
+        else :
+            return int( node_max_history.attrib['value'] )
+    def updatePageHistory(self , maxValue ):
+        node_max_history = self.xmlroot.find("maxpage")
+        if (node_max_history == None):
+            node_max_history = ET.SubElement( self.xmlroot ,  'maxpage')
+        node_max_history.attrib['value'] = str(maxValue)
+        self.close()
+    def writeColumnInfo(self,listColumn):
+        #create columns field
+        node_columns = self.xmlroot.find('columns')
+        if(node_columns != None):
+            if (self.isDebug):
+                print("[Crawler_Logger] list column:", column_node)
+        if (node_columns == None):
+            node_columns = ET.SubElement(self.xmlroot, 'columns')
+        for idx,column in enumerate( listColumn ):
+            node_column = node_columns.find("column[@id='%d']" % (idx))
+            if( node_column == None ):
+                node_column = ET.SubElement(node_columns, 'column')
+                node_column.attrib['id'] = str(idx)
+                node_column.attrib['name'] = str(column)
+        self.close()
+    def getColumnInfo(self):
+        listColumns = []
+        columns_node = self.xmlroot.find('columns')
+        for column_node in columns_node:
+            listColumns.append( column_node.attrib['name'] )
+        return listColumns
     def close(self) :
         proc_xml_indent(self.xmlroot)
         tree = ET.ElementTree(self.xmlroot)
         tree.write(self.filename, encoding='utf-8', xml_declaration=True)
+
+
+class DocPreprocessor :
+    def __init__(self):
+        self.listBrackets = [("\(", "\)"), ("\[", "\]"), ("［", "］"), ("【", "】"), ("<", ">"), ("＜", "＞"), ("{", "}"),
+                            ("＜", "＞"), ("『", "』")]
+        self.listSymToRemove = list("\"\'?!#＂,.`‘’’“▶”")
+        self.listSymToEmpty = list("·/…∼~")
+    def removeBlocks(self,s):
+        for elem_tuple in self.listBrackets:
+            reg_exp = "%s[^%s]*?%s" % (elem_tuple[0], elem_tuple[0], elem_tuple[1])
+            while True:
+                s_new = re.sub(reg_exp, '', s)
+                if s_new == s:
+                    break
+                s = s_new
+        return s
+
+    def removeChars(self,s):
+        for ch in self.listSymToRemove:
+            s = s.replace(str(ch), "")
+        return s
+    def replaceEmpty(self,s):
+        for ch in self.listSymToEmpty:
+            s = s.replace(str(ch), " ")
+        return s
+    # 괄호안의 언어들이 단어라면, 추가하는 것도 좋겠음.
+
 
 class craw_base :
     def __init__( self , isHidden, outDir , title ) :
@@ -194,10 +251,7 @@ class craw_base :
         self.txt = craw_file_writer( pathnameTxt + ".txt")
         self.isTxt = True
     def setTxtColumn(self, listTxt ):
-        if( self.txt.isFirst() ) :
-            for i,elem in enumerate( listTxt ):
-                if( i != (len(listTxt) -1) ) : self.txt.write( listTxt[i] )
-                else : self.txt.writeLast( listTxt[i] )
+        if( self.isLogger ) : self.logger.writeColumnInfo(listTxt)
     def close(self):
         if( self.isLogger ) : self.logger.close()
         if( self.isTxt) : self.txt.close()
