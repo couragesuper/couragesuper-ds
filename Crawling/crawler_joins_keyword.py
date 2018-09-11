@@ -14,9 +14,7 @@ szKeyword_En = "Keywordsasul"
     # histroy
     #   20180827 : using unified common library
     #   20180828 : add try ~ except in navigates pages
-
 #book cosmos용 entity checker이다.
-
 class crawler_joins_kwd (craw_base):
     def __init__( self , isHidden, outdir, title, keyword ) :
         self.keyword = keyword
@@ -95,7 +93,7 @@ class crawler_joins_kwd (craw_base):
             sleep(1)
         self.logger.close()
     def crawContents(self,isShowContent):
-        #article_title
+        #1.article_title
         try :
             elem = self.webDrv.find_element_by_id('article_title')
             txt_head = elem.text
@@ -105,7 +103,7 @@ class crawler_joins_kwd (craw_base):
             print("[crawContents] in article_title = {}" , e)
             self.txt.write("")
 
-        #byline
+        #2.byline
         try :
             elem = self.webDrv.find_element_by_class_name('byline')
             txt_date_input = elem.text.split()[2]
@@ -115,7 +113,7 @@ class crawler_joins_kwd (craw_base):
             print("[crawContents] in byline = {}", e)
             self.txt.write("")
 
-        #profile
+        #3.profile
         try :
             elem = self.webDrv.find_element_by_class_name('profile')
             txt_profile = elem.text
@@ -125,7 +123,7 @@ class crawler_joins_kwd (craw_base):
             print("[crawContents] in profile = {}", e)
             self.txt.write("")
 
-        # tags , |로 구분
+        #4.tags , |로 구분
         try :
             elem = self.webDrv.find_element_by_class_name('tag_list')
             listTags = elem.text.split("#")[1:]
