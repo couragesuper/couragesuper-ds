@@ -1,6 +1,6 @@
 # couragesuper-ds
 
-NLP, ¸Ó½Å·¯´×, µö·¯´×À» ¼öÇàÇÏ¸é¼­ ÀÛ¼ºÇÏ´Â °³ÀÎ °øÅëÄÚµåÀÔ´Ï´Ù.
+NLP, ë¨¸ì‹ ëŸ¬ë‹, ë”¥ëŸ¬ë‹ì„ ìˆ˜í–‰í•˜ë©´ì„œ ìž‘ì„±í•˜ëŠ” ê°œì¸ ê³µí†µì½”ë“œìž…ë‹ˆë‹¤.
 
 ## Python version
 
@@ -10,6 +10,7 @@ NLP, ¸Ó½Å·¯´×, µö·¯´×À» ¼öÇàÇÏ¸é¼­ ÀÛ¼ºÇÏ´Â °³ÀÎ °øÅëÄÚµåÀÔ´Ï´Ù.
 - Visualizing
 - Machine Learing 
 - NLP 
+- Data Processing 
  
 ### Crawling 
 
