@@ -5,12 +5,10 @@ import pickle
 sys.path.append("../Common/Crawler")
 sys.path.append("../Common/Util")
 sys.path.append("../Common/NLP")
-from mod_crawler_base import craw_file_reader as txt_reader
 
+from mod_crawler_base import craw_file_reader as txt_reader
 from mod_nlp_helper   import mod_nlp_helper as nlp_helper
 from soynlp.word      import WordExtractor
-
-isSave = False
 
 # sample for preprocessing
 #   1. read txtfile
@@ -19,6 +17,9 @@ isSave = False
 #   4. load pickle
 #   5. convert dict to excel
 #   6. crop    data from excel
+
+isSave = False
+
 if isSave :
     txtreader = txt_reader("../Data/Text/Joins/Sasul.txt", False )
     list_words = []

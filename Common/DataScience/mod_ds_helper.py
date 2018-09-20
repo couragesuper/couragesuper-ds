@@ -52,6 +52,29 @@ class mod_ds_helper :
     def json_to_list_withField(self,colSrc,colTar,field):
         self._json_field_name = field
         self.df[colTar] = self.df[colSrc].fillna('[]').apply(ast.literal_eval).apply(self._json_get_field)
+
+    def _list_to_entry(self,x):
+        if (isinstance(x, list)):
+            for i in x:
+                if( i not in self._tmp_dict.keys() ) :
+                    nElem = len( self._tmp_dict )
+                    self._tmp_dict[ i ] = nElem
+    def get_entryDict_from_listField(self, listField):
+        self._tmp_dict = defaultdict(lambda: 0)
+        self.df[listField].apply(self._list_to_entry)
+        return self._tmp_dict
+
+    def _field_to_entry(self,x):
+        if( x not in self._tmp_dict.keys() ) :
+            nElem = len( self._tmp_dict )
+            self._tmp_dict[ x ] = nElem
+
+    def get_entryDict_from_Field(self,Field):
+        self._tmp_dict = defaultdict(lambda: 0)
+        self.df[Field].apply(self._field_to_entry)
+        return self._tmp_dict
+
+    #
     def get_cntDict_from_listField(self, listField):
         cnt_tmp = Counter()
         self.df[listField].apply(cnt_tmp.update)
@@ -78,6 +101,18 @@ class mod_ds_helper :
             return OrderedDict(sorted(ddic.items()))
         else :
             return ddic
+
+    def _cvtKtoV(self,x):
+        if (isinstance(x, list)):
+            new_list = []
+            for i in x:
+                new_list.append( int(self._tmp_dict[i]) )
+            return new_list
+        return []
+
+    def cvt_klistTovlist(self,srcField,tarField,dicKV):
+        self._tmp_dict = dicKV
+        self.df[tarField] = self.df[srcField].apply( self._cvtKtoV )
 
     def _list_to_max(self, x):
         max_key = ""
@@ -107,4 +142,22 @@ class mod_ds_helper :
         self._tmp_dict = {}
 
     def get_onehotcoding_df(self,column):
-        return pd.get_dummies(self.df[column].apply(pd.Series).stack()).sum(level=0)
+        # 소숫점이 되네 ....
+        if False :
+            temp = self.df[column].apply(pd.Series)
+            print( "apply Series={}".format(temp) )
+            print( temp.dtypes)
+            temp2 = temp.stack()
+            print( "stack ={}".format(temp2) )
+            return pd.get_dummies(temp2).sum(level=0)
+        elif True :
+            dataframe = pd.get_dummies(self.df[column].apply(pd.Series).stack()).sum(level=0)
+            #컬럼의 소숫점 네이밍을 제거해 보겠다.
+            columns = dataframe.columns
+            dictCol = defaultdict( lambda : 0 )
+            for k in columns:
+                dictCol[str(k)] = str(int(k))
+            dataframe.rename(columns=lambda x: int(x), inplace=True)
+            return dataframe
+        else :
+            return pd.get_dummies(self.df[column])
