@@ -278,4 +278,91 @@ class craw_base :
     def navigate(self,links):
         return
 
+
+
+# version2
+# make strucuture to be simply
+    # 3 step
+        # run
+            # fetch
+            # scrape & save
+    # save file has type of csv
+class crawler_engine :
+    def __init__( self , isHidden, outDir , title ) :
+        szPlatform = get_platform()
+        print( "[crawler_base] platform is identified with {} ".format(szPlatform) );
+        if( szPlatform == "linux" ) :
+            self.isLinux = True
+            self.isHidden = True
+        elif ( szPlatform == "win" ) :
+            self.isLinux = False
+            self.isHidden = isHidden
+        self.isLogger = False
+        self.isTxt    = False
+        self.createLogger( outDir + "/"  + title , True )
+        self.createTxt( outDir + "/" + title)
+        curPath = os.path.dirname( os.path.abspath(__file__))
+        if (self.isLinux):
+            self.path_chrome_driver = curPath + path_chrome_driver_linux
+        else:
+            self.path_chrome_driver = curPath + path_chrome_driver_win
+        print( "[crawler_base] path of chrome driver is {} ".format( self.path_chrome_driver ) );
+        if (self.isHidden):
+            print( "[crawler_base] chromdriver option is hidden" );
+            self.options = webdriver.ChromeOptions()
+            self.options.add_argument('--headless')
+            self.options.add_argument('--window-size=1920x1080')
+            self.options.add_argument("--disable-gpu")
+            self.options.add_argument("--no-sandbox")
+            self.webDrv = webdriver.Chrome(self.path_chrome_driver, chrome_options=self.options)
+        else:
+            self.webDrv = webdriver.Chrome(self.path_chrome_driver)
+        self.delay_dn = 1.5
+
+    # cretae external device
+    def createLogger( self , pathnameLogger , isDebug):
+        self.logger = craw_history_logger( pathnameLogger +".xml" , isDebug)
+        self.isLogger = True
+    def createTxt( self , pathnameTxt ):
+        self.txt = craw_file_writer( pathnameTxt + ".txt")
+        self.isTxt = True
+    def setTxtColumn(self, listTxt ):
+        if( self.isLogger ) : self.logger.writeColumnInfo(listTxt)
+
+    # close
+    def close(self):
+        if( self.isLogger ) : self.logger.close()
+        if( self.isTxt) : self.txt.close()
+
+    # web driver function
+    def openPage(self, URL, delay=2.0):
+        try :
+            print( "[crawler_base] openPage = {}".format( URL ) )
+            self.webDrv.get(URL)
+            self.webDrv.implicitly_wait(delay)
+        except :
+            print("[crawler][base] with URL ".format(URL))
+
+    def run(self ):
+        print( "  [crawler_base] run()" )
+        #self.fetch()
+        return
+
+    def fetch(self):
+        # scrape
+        return
+
+    def scrape(self):
+        #save
+        return
+
+    def save(self):
+        return
+
+
+
+
+
+
+
 print( "[MSG][Load Crawler Base Component]" )
