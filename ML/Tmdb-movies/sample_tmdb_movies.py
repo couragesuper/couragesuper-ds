@@ -52,6 +52,8 @@ elif False :
 
 # processing JSON Field
 # 7. convert json field to list [companry]
+
+#json -> name list -> maxcnt_name ,
 ds_movie.json_to_list_withField("production_companies","company_name","name")
 ds_movie.json_to_list_withField("production_companies","company_id","id")
 
@@ -59,11 +61,31 @@ dicCntComp = ds_movie.get_cntDict_from_listField("company_name")
 print( dicCntComp )
 print( "len of cntCmop = {} , {}".format( len (dicCntComp), dicCntComp ))
 
+# 회사의 값 중에서, 메이저 회사를 따르기 위해서, 그러니까 4803개가 된다.
 ds_movie.set_listfield_maxvalue_withDict( "company_name" , "company_maxcnt_name" , dicCntComp )
 print( ds_movie.df['company_maxcnt_name'] )
 
 dicCountry = ds_movie.get_kvDict_from_listField("production_countries","iso_3166_1","name" )
 print( dicCountry )
+
+#OrderedDict([(1, 3545), (2, 630), (3, 240), (4, 142), (5, 94), (6, 55), (7, 57), (8, 37), (9, 29), (10, 25), (11, 12), (12, 33), (13, 15), (14, 9), (15, 5), (16, 10),
+#  (17, 5), (18, 2), (19, 3), (20, 3), (21, 1), (22, 5), (23, 2), (24, 2), (25, 1), (26, 2), (27, 1), (28, 1), (29, 3), (30, 1), (31, 1), (32, 2), (33, 1), (34, 5), (36, 4),
+# (37, 1), (38, 2), (39, 1), (40, 2), (41, 1), (42, 1), (49, 1), (52, 1), (53, 1), (54, 1), (55, 2), (56, 1), (59, 1), (64, 1), (69, 1), (75, 2), (79, 1), (81, 1), (94, 1),
+#  (96, 1), (102, 1), (114, 1), (118, 1), (122, 1), (165, 1), (201, 1), (222, 1), (285, 1), (311, 1), (319, 1)])
+
+# 319부터, Named 회사라고 생각하였다.
+# 4808개 회사 중에 319개로 갈수록 누적되는 비율을 보아서, 적당한 구간을 자르고 싶다.
+# 그런데 아직은 아이디어가 없다. ~~ @_@
+
+# bokeh로 확축소가 되는 그래프를 그릴 수 없을까?
+
+
+
+dicOrderedComp = ds_movie.get_cntDicItem(dicCntComp,True)
+
+print( dicOrderedComp )
+
+exit(0)
 
 # one hot coding
 df = ds_movie.get_onehotcoding_df( 'company_maxcnt_name' )
