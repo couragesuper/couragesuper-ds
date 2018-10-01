@@ -38,7 +38,6 @@ mapCabin = {"A": 0, "B": 0.4, "C": 0.8, "D": 1.2, "E": 1.6, "F": 2, "G": 2.4, "T
 
 mapFamily = {1: 0, 2: 0.4, 3: 0.8, 4: 1.2, 5: 1.6, 6: 2, 7: 2.4, 8: 2.8, 9: 3.2, 10: 3.6, 11: 4}
 
-
 if False :
     for index in list_compare :
         viz.bar_chart_withDict(ds_train.df, index, target_column, dict_class)
@@ -48,7 +47,7 @@ if False :
 ds_train.cvtPunctWord("Name","Title")
 ds_test.cvtPunctWord("Name","Title")
 
-ds_train.cvtWithMap( 'Title', 'Title',mapTitle  )
+ds_train.cvtWithMap( 'Title', 'Title',mapTitle )
 ds_test.cvtWithMap( 'Title', 'Title',mapTitle )
 
 ds_train.dropColumn('Name')
@@ -102,6 +101,8 @@ ds_test.cvtWithMap('Embarked','Embarked',mapEmbarked)
     # Fare .. median with Pclass
 ds_train.fillnaWithMedian( 'Pclass' , 'Fare' )
 ds_test.fillnaWithMedian( 'Pclass' , 'Fare' )
+
+#여기서 , binning을 위한 Bokeh 처리를 하고 시푸다.
 
 listFareBinning = [17,30,100]
 ds_train.binning( 'Fare', listFareBinning )
