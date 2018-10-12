@@ -278,8 +278,6 @@ class craw_base :
     def navigate(self,links):
         return
 
-
-
 # version2
 # make strucuture to be simply
     # 3 step
@@ -318,7 +316,6 @@ class crawler_engine :
         else:
             self.webDrv = webdriver.Chrome(self.path_chrome_driver)
         self.delay_dn = 1.5
-
     # cretae external device
     def createLogger( self , pathnameLogger , isDebug):
         self.logger = craw_history_logger( pathnameLogger +".xml" , isDebug)
@@ -328,12 +325,10 @@ class crawler_engine :
         self.isTxt = True
     def setTxtColumn(self, listTxt ):
         if( self.isLogger ) : self.logger.writeColumnInfo(listTxt)
-
     # close
     def close(self):
         if( self.isLogger ) : self.logger.close()
         if( self.isTxt) : self.txt.close()
-
     # web driver function
     def openPage(self, URL, delay=2.0):
         try :
@@ -342,27 +337,15 @@ class crawler_engine :
             self.webDrv.implicitly_wait(delay)
         except :
             print("[crawler][base] with URL ".format(URL))
-
     def run(self ):
         print( "  [crawler_base] run()" )
         #self.fetch()
         return
-
     def fetch(self):
         # scrape
         return
-
     def scrape(self):
         #save
         return
-
     def save(self):
         return
-
-
-
-
-
-
-
-print( "[MSG][Load Crawler Base Component]" )

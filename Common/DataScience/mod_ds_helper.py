@@ -78,7 +78,6 @@ class mod_ds_helper :
         self.df[Field].apply(self._field_to_entry)
         return self._tmp_dict
 
-    #
     def get_cntDict_from_listField(self, listField):
         cnt_tmp = Counter()
         self.df[listField].apply(cnt_tmp.update)
@@ -96,7 +95,7 @@ class mod_ds_helper :
         self._tmp_val  = vfield
         self.df[jsoncolumn].fillna('[]').apply(ast.literal_eval).apply(self._json_kv_pairing)
         return self._tmp_dict
-    def get_cntDicItem(self,dicCnt,isSort):
+    def get_cntDicItem(self,dicCnt, isSort):
         ddic = defaultdict(lambda: 0)
         for k, v in dicCnt.items():
             int_v = int(v)
@@ -194,7 +193,14 @@ class mod_ds_helper_v2 :
 
     # NLP
     def cvtPunctWord(self,srcCol, tarCol):
-        self.df[tarCol] = self.df[srcCol].str.extract(' ([A-Za-z]+)\.', expand=False)
+        self.df[tarCol] = self.df[srcCol].str.extract(' ([A-Za-z]+)\.', expand=False )
+
+    def _split( self, text , split_char ):
+        try :   return text.split( split_char )
+        except: return []
+
+    def nlpSplitter(self, srcCol, tarCol, spliiter ):
+        self.df[tarCol] = self.df[srcCol].apply(lambda x: self._split( x, apply , splitter ) )
 
     # Binning
     def binning(self , column, listTargets ):
@@ -239,6 +245,7 @@ class mod_ds_helper_v2 :
                 cur_val = json[vfield]
                 if ( json[ kfield ] not in self._tmp_dict.keys()):
                     self._tmp_dict[ cur_key ] = cur_val
+
     def getDictFromJsonList(self, jsoncolumn, kfield, vfield ):
         self._tmp_dict = {}
         self.df[jsoncolumn].fillna('[]').apply(ast.literal_eval).apply(self._getDictFromJsonList , kfield = kfield, vfield = vfield )
@@ -268,8 +275,6 @@ class mod_ds_helper_v2 :
             return OrderedDict(sorted(ddic.items()))
         else:
             return ddic
-    #
-
 
     # -----------------------------------------------------------------------------------
 
