@@ -1,9 +1,10 @@
 import sys
 import json
 sys.path.append("../Common")
-from libmysql import dbConMysql
+from Mysql.libmysql import dbConMysql
 
 class modelChatbot :     
+    # constcurutor 
     def __init__(self) :
         self.config_bible = {
           'user': 'root',
@@ -22,6 +23,7 @@ class modelChatbot :
         self.dbBible = dbConMysql( self.config_bible )
         self.dbBot   = dbConMysql( self.config_bot )
         
+    # db api 
     def isExistUsr(self,usrID) :
         query = "select * from tUserChatState where userkey = '%s'" % (usrID)
         ret = self.dbBot.selectQuery( query )
