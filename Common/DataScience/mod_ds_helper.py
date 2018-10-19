@@ -180,12 +180,25 @@ class mod_ds_helper_v2 :
             print("\t[{0}]\tType:{1}\tnUni:{2}\tnNull:{3} ".format(col, self.df[col].dtype, self.df[col].nunique(), self.df[col].isnull().sum(axis=0) ))
             if( self.df[col].dtype != np.object ) :
                 print( self.df[col].describe() )
+
+    def makeDataReport(self , csv_name):
+        listColumn = ["name", "content", "datatype", "convert DataType", "feature", "idea", "nUnique", "nNull"]
+        listData = []
+        for col in self.df.columns:
+            listData.append({'name': col, "content": "", "datatype": self.df[col].dtype, "feature": "", "idea": "", "nUnique": self.df[col].nunique(), "nNull": self.df[col].isnull().sum(axis=0)})
+        df_report = pd.DataFrame( columns=listColumn, data=listData)
+        df_report.to_csv( csv_name + ".csv", encoding="UTF-8", index=False)
+
     def info_unique(self):
         for col in self.df.columns:
             try :
                 print("{}={}".format(col,self.df[col].unique()))
             except:
                 continue
+
+    # union 원소들 보기 , 원소별 카운트 보기
+    def get_unique(self,column):
+        return self.df[column].unique()
 
     # Categorized
     def cvtWithMap(self,srcCol,tarCol,dicMap):
@@ -230,6 +243,15 @@ class mod_ds_helper_v2 :
     def _JsonToList(self,x, field ):
         return [ i[ field  ] for i in x ] if isinstance(x, list) else []
         # json to list with single field
+
+    # Get CountDict From Field
+    def _applyFieldCnt(self, x , cntDict ):
+        cntDict[ x ] = cntDict[ x ] + 1
+
+    def getCntDictfromField(self, listField):
+        cntDict = defaultdict(lambda : 0)
+        self.df[listField].apply( self._applyFieldCnt , cntDict = cntDict )
+        return dict( cntDict )
 
     # Get CntDict from List
     def getCntDictfromList(self, listField):
@@ -277,7 +299,6 @@ class mod_ds_helper_v2 :
             return ddic
 
     # -----------------------------------------------------------------------------------
-
     def _list_to_entry(self,x):
         if (isinstance(x, list)):
             for i in x:
@@ -311,8 +332,6 @@ class mod_ds_helper_v2 :
         self._tmp_dict = dicKV
         self.df[tarField] = self.df[srcField].apply( self._cvtKtoV )
 
-
-
     def _list_to_filter_minval(self, x):
         if( isinstance( x,list ) ) :
             for elem in x :
@@ -320,6 +339,7 @@ class mod_ds_helper_v2 :
             return [max_key]
         else :
             return []
+
     def set_listfield_filtered_withDict(self, srcCol, tarCol, minval , dictMap ):
         self._tmp_dict = dictMap
         self.df[tarCol] = self.df[srcCol].apply(self._list_to_filter_minval)

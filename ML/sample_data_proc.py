@@ -1,29 +1,35 @@
+# To apply common data processing library to titanic
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
 import sys
 sys.path.append("../Common")
-from Visualizer import mod_viz_helper as viz
+from Visualizer  import mod_viz_helper as viz
 from DataScience import mod_ds_helper as dp
 
-data_root = "Data\\"
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
+#1. Loading data
+data_root = "Data\\"
 train = pd.read_csv(data_root + 'train.csv')
 test  = pd.read_csv(data_root + 'test.csv')
 
+#2. data processsing helper
 isChecker = False;
-ds_train = dp.mod_ds_helper(train)
-ds_test = dp.mod_ds_helper(test)
+ds_train = dp.mod_ds_helper_v2(train)
+ds_test = dp.mod_ds_helper_v2(test)
 
-def part_checker() :
-    if isChecker :
-        input()
-    print("\n\n")
-
-# 1. print info
+#3. column
 ds_train.info()
 ds_test.info()
 list_columns = ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp','Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
+
+#4. data report
+if False :
+    ds_train.makeDataReport( "titanic" )
 
 # Target vs Column : Bar Stack
 target_column = 'Survived'
@@ -38,21 +44,34 @@ mapCabin = {"A": 0, "B": 0.4, "C": 0.8, "D": 1.2, "E": 1.6, "F": 2, "G": 2.4, "T
 
 mapFamily = {1: 0, 2: 0.4, 3: 0.8, 4: 1.2, 5: 1.6, 6: 2, 7: 2.4, 8: 2.8, 9: 3.2, 10: 3.6, 11: 4}
 
+#5. Bar chart (괜춘함)
 if False :
     for index in list_compare :
         viz.bar_chart_withDict(ds_train.df, index, target_column, dict_class)
 
-# Feature Engineering
+#6. Feature engineering
     # 1.Name to Title
 ds_train.cvtPunctWord("Name","Title")
 ds_test.cvtPunctWord("Name","Title")
 
+cntDict = ds_train.getCntDictfromField("Title")
+
+# get countdict
 ds_train.cvtWithMap( 'Title', 'Title',mapTitle )
 ds_test.cvtWithMap( 'Title', 'Title',mapTitle )
 
+# sns test
+if False :
+    sns.distplot( ds_train.df['Title'] )
+    sns.jointplot(x=ds_train.df['Title'], y=ds_train.df['Survived'], data=ds_train.df);
+    with sns.axes_style("white"):
+        sns.jointplot( x=ds_train.df['Title'], y=ds_train.df['Survived'], kind="hex", color="k");
+
+sns.countplot( x=ds_train.df['Title'] , data=ds_train.df , alpha=0.5)
+plt.show()
+
 ds_train.dropColumn('Name')
 ds_test.dropColumn('Name')
-
 print( train['Title'].value_counts() )
 
 if False : #ok
@@ -60,9 +79,9 @@ if False : #ok
     plt.show()
     input()
 
-    # Sex
-ds_train.cvtWithMap('Sex','Sex',mapSex)
-ds_test.cvtWithMap('Sex','Sex',mapSex)
+# Sex
+ds_train.cvtWithMap('Sex', 'Sex', mapSex )
+ds_test.cvtWithMap('Sex', 'Sex', mapSex )
 
 if False : #ok
     viz.bar_chart_withDict(ds_train.df, 'Sex', target_column, dict_class)
@@ -84,7 +103,6 @@ if False : #ok
     viz.bar_chart_withDict(ds_train.df, 'Age', target_column, dict_class)
     plt.show()
     input()
-
 
     # Embarked
 if False :
@@ -162,9 +180,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 
 import numpy as np
-
-
-#machine learning
+# apply machine learing
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 k_fold = KFold(n_splits=10, shuffle=True, random_state=0)
@@ -200,7 +216,6 @@ print(score)
 print( round(np.mean(score)*100, 2) )
 
 #prediction
-
 clf = SVC()
 clf.fit( df_train_data , target )
 
