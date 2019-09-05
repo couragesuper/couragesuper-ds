@@ -321,7 +321,7 @@ class crawler_engine :
         self.logger = craw_history_logger( pathnameLogger +".xml" , isDebug)
         self.isLogger = True
     def createTxt( self , pathnameTxt ):
-        self.txt = craw_file_writer( pathnameTxt + ".txt")
+        self.txt = craw_file_writer( pathnameTxt + ".txt" )
         self.isTxt = True
     def setTxtColumn(self, listTxt ):
         if( self.isLogger ) : self.logger.writeColumnInfo(listTxt)

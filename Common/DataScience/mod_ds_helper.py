@@ -167,7 +167,7 @@ class mod_ds_helper :
 
 class mod_ds_helper_v2 :
     def __init__(self,  df ):
-        print("ver 1.1")
+        print("ver 2.0")
         self.isReady = False
         if isinstance(df, pd.DataFrame):
             self.df = df
@@ -367,3 +367,10 @@ class mod_ds_helper_v2 :
 
     def merge_onehotcoding_field(self ,column):
         self.df = pd.merge(left=self.df.reset_index(), right=self.get_onehotcoding_df(column).reset_index(), on="index").set_index("index")
+
+    def split_train_test( self , test_ratio):
+        shuffled_indices = np.random.permutation(len(self.df))
+        test_set_size = int(len(self.df) * test_ratio)
+        test_indices = shuffled_indices[:test_set_size]
+        train_indices = shuffled_indices[test_set_size:]
+        return self.df.iloc[train_indices], self.df.iloc[test_indices]
