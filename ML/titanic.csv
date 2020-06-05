@@ -1,0 +1,13 @@
+name,content,datatype,convert DataType,feature,idea,nUnique,nNull
+PassengerId,,int64,,,,891,0
+Survived,,int64,,,,2,0
+Pclass,,int64,,,,3,0
+Name,,object,,,,891,0
+Sex,,object,,,,2,0
+Age,,float64,,,,88,177
+SibSp,,int64,,,,7,0
+Parch,,int64,,,,7,0
+Ticket,,object,,,,681,0
+Fare,,float64,,,,248,0
+Cabin,,object,,,,147,687
+Embarked,,object,,,,3,2

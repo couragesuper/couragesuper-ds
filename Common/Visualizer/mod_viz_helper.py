@@ -38,7 +38,7 @@ def hist_df_column( df, col ) :
     plt.title(col)
     df[col].hist(bins=df[col].nunique())
 
-def hist_df( df , n_bin , sz) :
+def hist_df( df , n_bin , sz = (20,15)) :
     df.hist(bins=n_bin , figsize = sz)
 
 def corrHeatMat( df ):
@@ -54,4 +54,5 @@ def corrHeatMat( df ):
 def scattermatrix ( df , columns , sz):
     scatter_matrix( df[columns] , figsize = sz)
 
-
+def pltshow() :
+    plt.show()

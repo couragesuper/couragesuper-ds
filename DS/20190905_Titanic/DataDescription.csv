@@ -1,0 +1,13 @@
+name,content,datatype,convert DataType,feature,idea,nUnique,Unique,nNull
+PassengerId,,int64,,,,891,number is over 30,0
+Survived,,int64,,,,2,[0 1],0
+Pclass,,int64,,,,3,[3 1 2],0
+Name,,object,,,"Title 추출 , Label화",891,number is over 30,0
+Sex,,object,,,Label화 ,2,['male' 'female'],0
+Age,,float64,,,,88,number is over 30,177
+SibSp,,int64,,,,7,[1 0 3 4 2 5 8],0
+Parch,,int64,,,,7,[0 1 2 5 3 4 6],0
+Ticket,,object,,,,681,number is over 30,0
+Fare,,float64,,,,248,number is over 30,0
+Cabin,,object,,,,147,number is over 30,687
+Embarked,,object,,,,3,['S' 'C' 'Q' nan],2
