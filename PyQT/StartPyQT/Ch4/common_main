@@ -72,6 +72,9 @@ class MyApp(QMainWindow):
         self.date = QDate.currentDate()
         self.statusBar().showMessage(self.date.toString(Qt.DefaultLocaleLongDate))
 
+    def connectUI(self):
+        print("connectUI")
+
     def initUI(self):
         if ( Path( self.configFileName ).exists() == False ) :
             print("[Error] Configuration File isn't exists")
@@ -91,7 +94,7 @@ class MyApp(QMainWindow):
         self.makeMenuAndToolBar()
         self.makeWindowFrame()
         self.showStatusBar()
-
+        self.connectUI()
 
         self.show()
         return 0
