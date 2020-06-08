@@ -73,7 +73,7 @@ class Crawler_Logger :
             return { "check":"ok" , "ret": node_history['ret']}
 
     def updateXML(self) :
-        indent(self.xmlroot)
+        #indent(self.xmlroot)
         tree = ET.ElementTree(self.xmlroot)
         tree.write(self.filename, encoding='utf-8', xml_declaration=True)
 

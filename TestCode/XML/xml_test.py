@@ -89,7 +89,7 @@ class Crawling_History :
             child['Articles'] = ET.SubElement( rootNode , "Articles" )
             tree = ET.ElementTree(root)
             tree.write( filename )
-        elif :
+        else:
             xml_root = self.xmltree.getroot()
             for k,v in self.dictConf.getitem() :
                 xml_root.find( k ).text = v
