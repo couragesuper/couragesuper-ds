@@ -96,8 +96,14 @@ class MyApp(QMainWindow):
         self.show()
         return 0
 
+
+class MyApp2(MyApp):
+    def __init__(self , configFileName ):
+        super().__init__(configFileName)
+
+
 if __name__ == '__main__' :
     app = QApplication(sys.argv)
-    ex = MyApp( "config\\UIConfig.xml")
+    ex = MyApp2( "config\\UIConfig.xml")
     if( 0 == ex.initUI() ) : sys.exit(app.exec_())
     else : print("initalize framework is error")
