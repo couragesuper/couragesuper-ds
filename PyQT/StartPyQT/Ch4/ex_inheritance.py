@@ -3,6 +3,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from startPyQT import MyApp
+from ex_load_example import MyWindow
 
 class MyApp2(MyApp):
     def __init__(self , configFileName ):
@@ -14,8 +15,8 @@ class MyApp2(MyApp):
     def slotVLX(self):
         print("----")
         QMessageBox.about(self, "message", "clicked")
-
-
+        dialog = MyWindow()
+        dialog.show()
 
 if __name__ == '__main__' :
     app = QApplication(sys.argv)
