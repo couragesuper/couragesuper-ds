@@ -11,29 +11,53 @@ from PyQt5.QtGui import QStandardItem
 sys.path.append("../../Common")
 from Mysql.libmysql import dbConMysql
 
-import codecs
-
+# duplicate from poemutil
 form_class = uic.loadUiType("PoemUtil.ui")[0]
 
 class Model( QStandardItemModel ) :
     def __init__(self, data):
         QStandardItemModel.__init__(self)
+        # 아이템을 한개씩 만들어서 추가하는 식으로 보임.
+        if( False ) :
 
-        d = data[0]  # Fruit
-        item = QStandardItem(d["type"])
-        child = QStandardItem(d["objects"][0])  # Apple
-        item.appendRow(child)
-        child = QStandardItem(d["objects"][1])  # Banana
-        item.appendRow(child)
-        self.setItem(0, 0, item)
+            d = data[0]  # Fruit
+            item = QStandardItem(d["type"])
+            child = QStandardItem(d["objects"][0])  # Apple
+            item.appendRow(child)
+            child = QStandardItem(d["objects"][1])  # Banana
+            item.appendRow(child)
+            self.setItem(0, 0, item)
 
-        d = data[1]  # Vegetable
-        item = QStandardItem(d["type"])
-        child = QStandardItem(d["objects"][0])  # Carrot
-        item.appendRow(child)
-        child = QStandardItem(d["objects"][1])  # Tomato
-        item.appendRow(child)
-        self.setItem(1, 0, item)
+            d = data[1]  # Vegetable
+            item = QStandardItem(d["type"])
+            child = QStandardItem(d["objects"][0])  # Carrot
+            item.appendRow(child)
+            child = QStandardItem(d["objects"][1])  # Tomato
+            item.appendRow(child)
+            self.setItem(1, 0, item)
+        else :
+            rev = 0
+            idx = 0
+            insertCnt = 0
+            item = None
+            child = None
+            for row in data :
+                print( row )
+                if( row['idx_mthx_poem'] != idx ) :
+                    if( item != None ) :
+                        self.setItem(insertCnt, 0, item)
+                        insertCnt = insertCnt + 1
+                        print("")
+                    print("1")
+                    string_name = "{}_{}".format( row['idx_mthx_poem'], row['curTitle'] )
+                    item = QStandardItem( string_name )
+                    idx = row['idx_mthx_poem']
+                print("2")
+                string_name = "{}_{}_rev{}".format(row['idx_mthx_poem'], row['curTitle'], row['revision'] )
+                child = QStandardItem( string_name )
+                item.appendRow(child)
+                rev = row['revision']
+
 
 
 class Mthx_Poem_DB_Util(QWidget, form_class):
@@ -44,9 +68,9 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.initConfig()
         self.setupUi(self)
         self.connectUI()
+        self.initDBMgs()
         self.initTreeView()
         self.initUI()
-        self.initDBMgs()
         self.show()
 
     def initConfig(self):
@@ -67,15 +91,31 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.chkSaveAndClear.setChecked(True)
 
     def initTreeView(self):
-        data = [
-            {"type": "Fruit", "objects": ["Apple", "Banana"]},
-            {"type": "Vegetable", "objects": ["Carrot", "Tomato"]},
-        ]
+        # 데이터를 이렇게 만들어야 하는가.
         # QTreeView 생성 및 설정
-        self.treePoems.setEditTriggers(QAbstractItemView.DoubleClicked)
-        self.model = Model(data)
-        self.treePoems.setModel(self.model)
 
+        queryPoemList = 'select \n'\
+        '   idx_mthx_poem,\n'\
+        '   revision,\n'\
+        '   maxrev,\n'\
+        '   title,\n'\
+        '   (select\n'\
+        '       title from tb_mthx_poem_data as A where A.idx_mthx_poem  = B.idx_mthx_poem and A.revision  = B.revision) as curTitle\n'\
+        'from\n'\
+        '   (select\n'\
+        '       idx_mthx_poem, revision, title, MAX(revision) as maxrev\n'\
+        '   from\n'\
+        '       tb_mthx_poem_data\n'\
+        'group by\n'\
+        '   idx_mthx_poem, revision) as B;'\
+
+        QueryRet = self.db.selectQuery( queryPoemList )
+        print( "initTree view " )
+        print( QueryRet )
+
+        self.treePoems.setEditTriggers(QAbstractItemView.DoubleClicked)
+        self.model = Model( QueryRet )
+        self.treePoems.setModel(self.model)
 
     def connectUI(self):
         self.btnSave.clicked.connect(self.slotBtnSave)
