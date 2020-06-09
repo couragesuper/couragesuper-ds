@@ -14,60 +14,45 @@ from Mysql.libmysql import dbConMysql
 # duplicate from poemutil
 form_class = uic.loadUiType("PoemUtil.ui")[0]
 
+# Model clss for TreeView
+
 class Model( QStandardItemModel ) :
 
     def __init__(self, data):
-        self.data = data
         QStandardItemModel.__init__(self)
+        self.data = data
+        self.makeItems()
+
+    def makeItems(self) :
         # 아이템을 한개씩 만들어서 추가하는 식으로 보임.
-        if( False ) :
+        item = None
+        rev = 0
+        idx = 0
+        self.CntItem = 0
+        childCnt = 0
+        for row in self.data:
+            # print(row)
+            # changing of index (new poem)
+            if (row['idx_mthx_poem'] != idx):
+                if (item != None):
+                    string_name = "{}_{} ({})".format(idx, curtitle, childCnt)
+                    item.setText(string_name)
+                    self.setItem(self.CntItem, 0, item)
+                    self.CntItem = self.CntItem + 1
+                    childCnt = 0
+                string_name = "{}_{}".format(row['idx_mthx_poem'], row['curTitle'])
+                item = QStandardItem(string_name)
+                idx = row['idx_mthx_poem']
+                curtitle = row['curTitle']
+            # add child-item
+            rev = row['revision']
+            string_child_name = "{}_{}_rev{}".format(row['idx_mthx_poem'], row['curTitle'], rev )
+            child_1 = QStandardItem(string_child_name)
+            child_2 = QStandardItem("{}".format(idx))
+            child_3 = QStandardItem("{}".format(rev))
+            item.appendRow([child_1, child_2, child_3])
+            childCnt = childCnt + 1
 
-            d = data[0]  # Fruit
-            item = QStandardItem(d["type"])
-            child = QStandardItem(d["objects"][0])  # Apple
-            item.appendRow(child)
-            child = QStandardItem(d["objects"][1])  # Banana
-            item.appendRow(child)
-            self.setItem(0, 0, item)
-
-            d = data[1]  # Vegetable
-            item = QStandardItem(d["type"])
-            child = QStandardItem(d["objects"][0])  # Carrot
-            item.appendRow(child)
-            child = QStandardItem(d["objects"][1])  # Tomato
-            item.appendRow(child)
-            self.setItem(1, 0, item)
-        else :
-            rev = 0
-            idx = 0
-            insertCnt = 0
-            childCnt = 0
-            item = None
-            child = None
-
-            for row in data :
-                print( row )
-                if( row['idx_mthx_poem'] != idx ) :
-                    if( item != None ) :
-                        string_name = "{}_{} ({})".format(idx, curtitle , childCnt )
-                        item.setText(string_name)
-                        item_2 = QStandardItem("{}".format(idx))
-                        item_3 = QStandardItem("{}".format(rev))
-                        self.setItem(insertCnt, 0, item )
-                        insertCnt = insertCnt + 1
-                        childCnt = 0
-                    string_name = "{}_{}".format(row['idx_mthx_poem'], row['curTitle'])
-                    item = QStandardItem(string_name)
-                    idx = row['idx_mthx_poem']
-                    curtitle = row['curTitle']
-                print("2")
-                string_name = "{}_{}_rev{}".format(row['idx_mthx_poem'], row['curTitle'], row['revision'] )
-                child_1 = QStandardItem( string_name )
-                rev = row['revision']
-                child_2 = QStandardItem( "{}".format(idx) )
-                child_3 = QStandardItem( "{}".format(rev) )
-                item.appendRow( [child_1 , child_2, child_3] )
-                childCnt = childCnt + 1
     def findQueryData(self, index ):
         for row in self.data :
             print( row )
@@ -85,6 +70,8 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         super().__init__()
         self.initConfig()
         self.setupUi(self)
+        self.setLayout( self.mainHLayout ) # this makes attaching layout to main window
+
         self.connectUI()
         self.initDBMgs()
         self.initTreeView()
@@ -150,70 +137,121 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         #self.treePoems.selectionModel().selectedChanged.connect( self.slotPoemTree )
 
     def slotBtnSave(self):
-        # get and check datatype
-        strIndex = self.editNo.text()
-        strTitle = self.editTitle.text()
-        strDate = self.editDate.text()
-        strRev = self.editRev.text()
-        strContent = self.editContent.toPlainText()
-        strComment = self.editComment.toPlainText()
 
-        # remove 2 line return chars
-        strContent = strContent.replace("\r\n\r\n\r\n" , "\r\n\r\n")
-        strContent = strContent.replace("\n\n\n", "\n\n")
-        strComment = strComment.replace("\r\n\r\n\r\n", "\r\n\r\n")
-        strComment = strComment.replace("\n\n\n", "\n\n")
+        if( self.query_ret == None ) :
+            print("[Info] insert new data ")
+            # get and check datatype
+            strIndex = self.editNo.text()
+            strTitle = self.editTitle.text()
+            strDate = self.editDate.text()
+            strRev = self.editRev.text()
+            strContent = self.editContent.toPlainText()
+            strComment = self.editComment.toPlainText()
 
-        # propiling
-        print( strIndex.isdigit() )
-        print( strRev.isdigit() )
-        print( strDate.isdigit() )
+            # remove 2 line return chars
+            strContent = strContent.replace("\r\n\r\n\r\n" , "\r\n\r\n")
+            strContent = strContent.replace("\n\n\n", "\n\n")
+            strComment = strComment.replace("\r\n\r\n\r\n", "\r\n\r\n")
+            strComment = strComment.replace("\n\n\n", "\n\n")
 
-        # database query
-        # insert Query
-        strQueryHead = 'insert \n'\
-        'into \n'\
-        '`tb_mthx_poem_data` \n'\
-        '( \n'\
-            '`idx_mthx_poem` \n'\
-            ',`title` \n'\
-            ',`content` \n' \
-            ',`revision` \n'
+            # propiling
+            print( strIndex.isdigit() )
+            print( strRev.isdigit() )
+            print( strDate.isdigit() )
 
-        if( (strComment != None) ) : strQueryHead += ', `comment` \n'
-        if( strDate != None ) : strQueryHead += ', `cdate` \n'
+            # database query
+            # insert Query
+            strQueryHead = 'insert \n'\
+            'into \n'\
+            '`tb_mthx_poem_data` \n'\
+            '( \n'\
+                '`idx_mthx_poem` \n'\
+                ',`title` \n'\
+                ',`content` \n' \
+                ',`revision` \n'
 
-        strQueryMid = ') \n'\
-        'VALUES \n'\
-        '( \n'
+            if( (strComment != None) ) : strQueryHead += ', `comment` \n'
+            if( strDate != None ) : strQueryHead += ', `cdate` \n'
 
-        strQueryValues = strIndex + ', \n'
-        strQueryValues += '"' + strTitle + '", \n'
-        strQueryValues += '"' + strContent + '", \n'
-        strQueryValues += '"' + strRev + '" \n'
+            strQueryMid = ') \n'\
+            'VALUES \n'\
+            '( \n'
 
-        if ((strComment != None)): strQueryValues += ',"' + strComment + '"\n'
-        if (strDate != None): strQueryValues += ',' + strDate + '\n'
-        strQueryEnd = ');'
+            strQueryValues = strIndex + ', \n'
+            strQueryValues += '"' + strTitle + '", \n'
+            strQueryValues += '"' + strContent + '", \n'
+            strQueryValues += '"' + strRev + '" \n'
 
-        strQuery = strQueryHead + strQueryMid + strQueryValues + strQueryEnd
-        print( strQuery )
-        isOK = self.db.commitQuery( strQuery )
+            if ((strComment != None)): strQueryValues += ',"' + strComment + '"\n'
+            if (strDate != None): strQueryValues += ',' + strDate + '\n'
+            strQueryEnd = ');'
 
-        # DB OK -> file writing
-        print( isOK )
-        if( isOK ) :
-            # file write
-            filename = self.dir + "\\mtxpoem_" + strIndex + "_Rev" + strRev + ".txt"
-            f = open(filename, "wt", encoding="utf-8")
-            f.write("*no:" + strIndex + "\r\n")
-            f.write("*title:" + strTitle + "\r\n")
-            f.write("*date:" + strDate + "\r\n")
-            f.write("*revision:" + strRev + "\r\n")
-            f.write("*content:\r\n" + strContent + "\r\n")
-            f.write("*comment:\r\n" + strComment + "\r\n")
-            f.close()
-            if (self.chkSaveAndClear.isChecked()): self.slotBtnClear()
+            strQuery = strQueryHead + strQueryMid + strQueryValues + strQueryEnd
+            print( strQuery )
+            isOK = self.db.commitQuery( strQuery )
+
+            # DB OK -> file writing
+            print( isOK )
+            if( isOK ) :
+                # file write
+                filename = self.dir + "\\mtxpoem_" + strIndex + "_Rev" + strRev + ".txt"
+                f = open(filename, "wt", encoding="utf-8")
+                f.write("*no:" + strIndex + "\r\n")
+                f.write("*title:" + strTitle + "\r\n")
+                f.write("*date:" + strDate + "\r\n")
+                f.write("*revision:" + strRev + "\r\n")
+                f.write("*content:\r\n" + strContent + "\r\n")
+                f.write("*comment:\r\n" + strComment + "\r\n")
+                f.close()
+                if (self.chkSaveAndClear.isChecked()): self.slotBtnClear()
+        else :
+            print("[Info] Update Data ")
+
+            strIndex = self.editNo.text()
+            strTitle = self.editTitle.text()
+            strDate = self.editDate.text()
+            strRev = self.editRev.text()
+            strContent = self.editContent.toPlainText()
+            strComment = self.editComment.toPlainText()
+
+            isChangedIndex = False
+            isChangedTitle = False
+            isChangedDate = False
+            isChangedRev = False
+            isChangedContent = False
+            isChangedComment = False
+
+            print(self.query_ret)
+
+            if ( int(strIndex) != self.query_ret[0]['idx_mthx_poem'] ) : isChangedIndex = True;
+            if ( strTitle != self.query_ret[0]['title']): isChangedTitle = True;
+            if ( strDate != self.query_ret[0]['cdate']): isChangedDate = True;
+            if ( int(strRev) != self.query_ret[0]['revision']): isChangedRev = True;
+            if ( strContent != self.query_ret[0]['content']): isChangedContent = True;
+            if ( strComment != self.query_ret[0]['comment']): isChangedComment = True;
+            if ( isChangedRev or isChangedIndex ) :
+                print("[Error] Update Data ... Changing Revision is wrong case ")
+            else :
+                if( isChangedContent == True ) :
+                    print( "[INFO] work to do" )
+                else :
+                    print( "[INFO] update database")
+                    query_stat_update = 'UPDATE \n' \
+                    ' bible.tb_mthx_poem_data \n' \
+                    'SET  \n' \
+                    ' title = "{}"  \n' \
+                    ', comment = "{}"  \n' \
+                    ', cdate = "{}"  \n' \
+                    'WHERE  \n' \
+                    ' idx_mthx_poem = {}   \n' \
+                    '  AND \n' \
+                    ' revision = {}   \n'.format( strTitle , strComment, strDate , int(strIndex) , int(strRev))
+                    print("we try to update database with query \n {} ".format( query_stat_update ))
+                    self.db.commitQuery( query_stat_update )
+            #self.UpdateTreeView()
+
+    def UpdateTreeView(self):
+        print("update tree view")
 
     def slotBtnClear(self):
         strIndex = self.editNo.clear()
@@ -222,6 +260,7 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         strRev = self.editRev.setText("5")
         strContent = self.editContent.clear()
         strComment = self.editComment.clear()
+        if ( None != self.query_ret ) : self.query_ret = None
 
     # changes save dir1
     def slotBtnOpen(self):
@@ -236,50 +275,51 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         print( "displayPoemWithParentItem , {}".format( index ) )
         ret = self.model.findQueryData( index )
         query_select = "select * from tb_mthx_poem_data where idx_mthx_poem = {} and revision = {}".format( ret['idx'] , ret['rev'])
-        query_ret = self.db.selectQuery( query_select )
-        print( query_ret )
-        self.editNo.setText( str(query_ret[0]['idx_mthx_poem']) )
-        self.editTitle.setText( query_ret[0]['title'] )
-        self.editDate.setText( str(query_ret[0]['cdate']) )
-        self.editRev.setText( str(query_ret[0]['revision']) )
-        self.editContent.setText( query_ret[0]['content'] )
-        self.editComment.setText( query_ret[0]['comment'] )
+        self.query_ret = self.db.selectQuery( query_select )
+        print( self.query_ret )
+        self.editNo.setText( str(self.query_ret[0]['idx_mthx_poem']) )
+        self.editTitle.setText( self.query_ret[0]['title'] )
+
+        dateobj = self.query_ret[0]['cdate']
+        strDate = "%4d" % dateobj.year + "%02d" % dateobj.month + "%02d" % dateobj.day
+        self.editDate.setText( strDate )
+        self.editRev.setText( str(self.query_ret[0]['revision']) )
+        self.editContent.setText( self.query_ret[0]['content'] )
+        self.editComment.setText( self.query_ret[0]['comment'] )
 
     def displayPoemWithChildItem( self , index , rev):
         query_select = "select * from tb_mthx_poem_data where idx_mthx_poem = {} and revision = {}".format(index,rev)
-        query_ret = self.db.selectQuery(query_select)
-        print(query_ret)
-        self.editNo.setText(str(query_ret[0]['idx_mthx_poem']))
-        self.editTitle.setText(query_ret[0]['title'])
-        self.editDate.setText(str(query_ret[0]['cdate']))
-        self.editRev.setText(str(query_ret[0]['revision']))
-        self.editContent.setText(query_ret[0]['content'])
-        self.editComment.setText(query_ret[0]['comment'])
+        self.query_ret = self.db.selectQuery(query_select)
+        print( self.query_ret )
+        self.editNo.setText(str(self.query_ret[0]['idx_mthx_poem']))
+        self.editTitle.setText(self.query_ret[0]['title'])
 
+        dateobj = self.query_ret[0]['cdate']
+        strDate = "%4d" % dateobj.year + "%02d" % dateobj.month + "%02d" % dateobj.day
+        self.editDate.setText(strDate)
+        self.editRev.setText(str(self.query_ret[0]['revision']))
+        self.editContent.setText(self.query_ret[0]['content'])
+        self.editComment.setText(self.query_ret[0]['comment'])
 
     def slotPoemTree(self, index):
         print("\n\nslotPoemTree index{}".format(index))
         print("row:{},col:{},".format(index.row() , index.column() ))
         print( self.treePoems.selectedIndexes()  )
-
         selectedIndexData = [None,None,None]
-
         if( True ) :
             cnt = 0
             for ix in self.treePoems.selectedIndexes() :
                 selectedIndexData[ cnt ] = ix.data()
                 cnt = cnt + 1
-
         # I dont know why .... like this ?
         if( (selectedIndexData[1] == None) and (selectedIndexData[2] == None) ) :
-            print("1111111111111")
             title = selectedIndexData[0]
             targetIdx = int( title.split("_")[0] )
             self.displayPoemWithParentItem( targetIdx )
         elif( (selectedIndexData[1] != None) and (selectedIndexData[2] != None) ) :
             self.displayPoemWithChildItem( int(selectedIndexData[1]) , int(selectedIndexData[2]) )
         else :
-            print("3333333333333")
+            print("Error")
 
 
 
