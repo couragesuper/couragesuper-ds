@@ -15,7 +15,9 @@ from Mysql.libmysql import dbConMysql
 form_class = uic.loadUiType("PoemUtil.ui")[0]
 
 class Model( QStandardItemModel ) :
+
     def __init__(self, data):
+        self.data = data
         QStandardItemModel.__init__(self)
         # 아이템을 한개씩 만들어서 추가하는 식으로 보임.
         if( False ) :
@@ -39,32 +41,48 @@ class Model( QStandardItemModel ) :
             rev = 0
             idx = 0
             insertCnt = 0
+            childCnt = 0
             item = None
             child = None
+
             for row in data :
                 print( row )
                 if( row['idx_mthx_poem'] != idx ) :
                     if( item != None ) :
-                        self.setItem(insertCnt, 0, item)
+                        string_name = "{}_{} ({})".format(idx, curtitle , childCnt )
+                        item.setText(string_name)
+                        item_2 = QStandardItem("{}".format(idx))
+                        item_3 = QStandardItem("{}".format(rev))
+                        self.setItem(insertCnt, 0, item )
                         insertCnt = insertCnt + 1
-                        print("")
-                    print("1")
-                    string_name = "{}_{}".format( row['idx_mthx_poem'], row['curTitle'] )
-                    item = QStandardItem( string_name )
+                        childCnt = 0
+                    string_name = "{}_{}".format(row['idx_mthx_poem'], row['curTitle'])
+                    item = QStandardItem(string_name)
                     idx = row['idx_mthx_poem']
+                    curtitle = row['curTitle']
                 print("2")
                 string_name = "{}_{}_rev{}".format(row['idx_mthx_poem'], row['curTitle'], row['revision'] )
-                child = QStandardItem( string_name )
-                item.appendRow(child)
+                child_1 = QStandardItem( string_name )
                 rev = row['revision']
-
+                child_2 = QStandardItem( "{}".format(idx) )
+                child_3 = QStandardItem( "{}".format(rev) )
+                item.appendRow( [child_1 , child_2, child_3] )
+                childCnt = childCnt + 1
+    def findQueryData(self, index ):
+        for row in self.data :
+            print( row )
+            if( row['idx_mthx_poem'] == index ) :
+                print( "matching row: {}".format(row))
+                ret =  {"idx":row['idx_mthx_poem'] , "rev":row['maxrev'] }
+                return ret;
+        print("not mathced...")
+        return {"idx":None , "rev":None}
 
 
 class Mthx_Poem_DB_Util(QWidget, form_class):
 
     def __init__(self):
         super().__init__()
-
         self.initConfig()
         self.setupUi(self)
         self.connectUI()
@@ -80,7 +98,6 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
                      'raise_on_warnings': True}
         self.db = dbConMysql(config_db)
-
 
     def initUI(self):
         setting = QSettings("mthx" , "poemdbutil")
@@ -113,14 +130,24 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         print( "initTree view " )
         print( QueryRet )
 
+
+        #make header for treeitem
         self.treePoems.setEditTriggers(QAbstractItemView.DoubleClicked)
         self.model = Model( QueryRet )
+
+        if (True) :
+            self.model.setHorizontalHeaderLabels( ['title' ,'id' ,'rev'] )
+
         self.treePoems.setModel(self.model)
+        self.treePoems.header().setSectionResizeMode( QHeaderView.ResizeToContents )
 
     def connectUI(self):
         self.btnSave.clicked.connect(self.slotBtnSave)
         self.btnClear.clicked.connect(self.slotBtnClear)
         self.btnOpen.clicked.connect(self.slotBtnOpen)
+        self.treePoems.clicked.connect(self.slotPoemTree)
+
+        #self.treePoems.selectionModel().selectedChanged.connect( self.slotPoemTree )
 
     def slotBtnSave(self):
         # get and check datatype
@@ -196,7 +223,7 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         strContent = self.editContent.clear()
         strComment = self.editComment.clear()
 
-    # changes save dir
+    # changes save dir1
     def slotBtnOpen(self):
         path = QFileDialog.getExistingDirectory(self, 'Select Directory', './')
         self.dir = str(path)
@@ -204,6 +231,59 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         setting = QSettings("mthx" , "poemdbutil")
         setting.setValue("savedir" , self.dir )
         setting.sync()
+
+    def displayPoemWithParentItem( self, index ):
+        print( "displayPoemWithParentItem , {}".format( index ) )
+        ret = self.model.findQueryData( index )
+        query_select = "select * from tb_mthx_poem_data where idx_mthx_poem = {} and revision = {}".format( ret['idx'] , ret['rev'])
+        query_ret = self.db.selectQuery( query_select )
+        print( query_ret )
+        self.editNo.setText( str(query_ret[0]['idx_mthx_poem']) )
+        self.editTitle.setText( query_ret[0]['title'] )
+        self.editDate.setText( str(query_ret[0]['cdate']) )
+        self.editRev.setText( str(query_ret[0]['revision']) )
+        self.editContent.setText( query_ret[0]['content'] )
+        self.editComment.setText( query_ret[0]['comment'] )
+
+    def displayPoemWithChildItem( self , index , rev):
+        query_select = "select * from tb_mthx_poem_data where idx_mthx_poem = {} and revision = {}".format(index,rev)
+        query_ret = self.db.selectQuery(query_select)
+        print(query_ret)
+        self.editNo.setText(str(query_ret[0]['idx_mthx_poem']))
+        self.editTitle.setText(query_ret[0]['title'])
+        self.editDate.setText(str(query_ret[0]['cdate']))
+        self.editRev.setText(str(query_ret[0]['revision']))
+        self.editContent.setText(query_ret[0]['content'])
+        self.editComment.setText(query_ret[0]['comment'])
+
+
+    def slotPoemTree(self, index):
+        print("\n\nslotPoemTree index{}".format(index))
+        print("row:{},col:{},".format(index.row() , index.column() ))
+        print( self.treePoems.selectedIndexes()  )
+
+        selectedIndexData = [None,None,None]
+
+        if( True ) :
+            cnt = 0
+            for ix in self.treePoems.selectedIndexes() :
+                selectedIndexData[ cnt ] = ix.data()
+                cnt = cnt + 1
+
+        # I dont know why .... like this ?
+        if( (selectedIndexData[1] == None) and (selectedIndexData[2] == None) ) :
+            print("1111111111111")
+            title = selectedIndexData[0]
+            targetIdx = int( title.split("_")[0] )
+            self.displayPoemWithParentItem( targetIdx )
+        elif( (selectedIndexData[1] != None) and (selectedIndexData[2] != None) ) :
+            self.displayPoemWithChildItem( int(selectedIndexData[1]) , int(selectedIndexData[2]) )
+        else :
+            print("3333333333333")
+
+
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

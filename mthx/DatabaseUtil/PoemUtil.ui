@@ -24,7 +24,11 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="6,1,6">
     <item>
-     <widget class="QTreeView" name="treePoems"/>
+     <widget class="QTreeView" name="treePoems">
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
+     </widget>
     </item>
     <item>
      <spacer name="horizontalSpacer">
