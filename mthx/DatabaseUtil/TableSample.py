@@ -7,12 +7,40 @@ from PyQt5.QtCore import QAbstractItemModel
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
+from PyQt5.QtCore import Qt
 
 sys.path.append("../../Common")
 from Mysql.libmysql import dbConMysql
 
 # duplicate from poemutil
-form_class = uic.loadUiType("PoemUtil.ui")[0]
+form_class = uic.loadUiType("PoemUtil_tableview.ui")[0]
+
+class LogModel ( QStandardItemModel ) :
+
+    def __init__(self):
+        QStandardItemModel.__init__(self)
+
+    def makeTestItems(self):
+        item1 = QStandardItem("1")
+        item2 = QStandardItem("Err")
+        item3 = QStandardItem("Main")
+        item4 = QStandardItem("This is error message.")
+        self.setItem(0, 0, item1)
+        self.setItem(0, 1, item2)
+        self.setItem(0, 2, item3)
+        self.setItem(0, 3, item4)
+
+    def addLog(self , strLevel, strCate, strMessage ):
+        cntRow = self.rowCount()
+        item1 = QStandardItem(str(int(cntRow)))
+        item2 = QStandardItem(strLevel)
+        item3 = QStandardItem(strCate)
+        item4 = QStandardItem(strMessage)
+        self.setItem(cntRow, 0, item1)
+        self.setItem(cntRow, 1, item2)
+        self.setItem(cntRow, 2, item3)
+        self.setItem(cntRow, 3, item4)
+        print("----")
 
 # Model clss for TreeView
 class Model( QStandardItemModel ) :
@@ -20,7 +48,6 @@ class Model( QStandardItemModel ) :
         QStandardItemModel.__init__(self)
         self.data = data
         self.makeItems()
-
     def makeItems(self) :
         # 아이템을 한개씩 만들어서 추가하는 식으로 보임.
         item = None
@@ -65,6 +92,11 @@ class Model( QStandardItemModel ) :
 class Mthx_Poem_DB_Util(QWidget, form_class):
     def __init__(self):
         super().__init__()
+
+        self.logModel = LogModel()
+        self.logModel.setColumnCount(4)
+        self.logModel.setHorizontalHeaderLabels(['id', 'level', 'cate1', 'messsage'])
+
         self.initConfig()
         self.setupUi(self)
         self.setLayout( self.mainHLayout ) # this makes attaching layout to main window
@@ -72,6 +104,7 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.connectUI()
         self.initDBMgs()
         self.initTreeView()
+        self.initTableView()
         self.initUI()
         self.show()
 
@@ -79,9 +112,10 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.defaultRevision = 5
 
     def initDBMgs(self):
-        config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
-                     'raise_on_warnings': True}
+        config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible','raise_on_warnings': True}
         self.db = dbConMysql(config_db)
+        if( self.db != None ) : self.addLog("I" , "DB" ,"Init OK")
+        else : self.addLog("E" , "DB" ,"Init Fail")
 
     def initUI(self):
         setting = QSettings("mthx" , "poemdbutil")
@@ -90,11 +124,44 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.editRev.setText(str(self.defaultRevision))
         self.dir = setting.value("savedir")
         self.chkSaveAndClear.setChecked(True)
+    def addLog(self, level, cate, message ):
+        if( self.logModel != None ) :
+            self.logModel.addLog(level,cate,message)
+            self.tableLog.setRowHeight( self.logModel.rowCount( ) - 1 , 15 )
+    def initTableView(self):
+        queryPoemList = 'select \n' \
+                        '   idx_mthx_poem,\n' \
+                        '   revision,\n' \
+                        '   maxrev,\n' \
+                        '   title,\n' \
+                        '   (select\n' \
+                        '       title from tb_mthx_poem_data as A where A.idx_mthx_poem  = B.idx_mthx_poem and A.revision  = B.revision) as curTitle\n' \
+                        'from\n' \
+                        '   (select\n' \
+                        '       idx_mthx_poem, revision, title, MAX(revision) as maxrev\n' \
+                        '   from\n' \
+                        '       tb_mthx_poem_data\n' \
+                        'group by\n' \
+                        '   idx_mthx_poem, revision) as B;'
+
+        QueryRet = self.db.selectQuery(queryPoemList)
+        print(QueryRet)
+
+        self.tableLog.setSortingEnabled( False );
+        self.tableLog.setShowGrid( True )
+        self.tableLog.setGridStyle( Qt.SolidLine )
+        self.tableLog.setModel( self.logModel )
+
+        self.tableLog.setColumnWidth(0, 50)
+        self.tableLog.setColumnWidth(1, 80)
+        self.tableLog.setColumnWidth(2, 100)
+        self.tableLog.setColumnWidth(3, 300)
+        self.tableLog.setRowHeight(0, 25)
+
 
     def initTreeView(self):
         # 데이터를 이렇게 만들어야 하는가.
         # QTreeView 생성 및 설정
-
         queryPoemList = 'select \n'\
         '   idx_mthx_poem,\n'\
         '   revision,\n'\
@@ -114,6 +181,8 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         print( "initTree view " )
         print( QueryRet )
 
+        if( len(QueryRet) != 0 ) : self.addLog("I","DB","Loading Poem List .. OK")
+        else : self.addLog("I","DB","Loading Poem List .. Failed")
 
         #make header for treeitem
         self.treePoems.setEditTriggers(QAbstractItemView.DoubleClicked)
