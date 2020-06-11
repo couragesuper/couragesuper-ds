@@ -16,19 +16,8 @@ from Mysql.libmysql import dbConMysql
 form_class = uic.loadUiType("PoemUtil_tableview.ui")[0]
 
 class LogModel ( QStandardItemModel ) :
-
     def __init__(self):
         QStandardItemModel.__init__(self)
-
-    def makeTestItems(self):
-        item1 = QStandardItem("1")
-        item2 = QStandardItem("Err")
-        item3 = QStandardItem("Main")
-        item4 = QStandardItem("This is error message.")
-        self.setItem(0, 0, item1)
-        self.setItem(0, 1, item2)
-        self.setItem(0, 2, item3)
-        self.setItem(0, 3, item4)
 
     def addLog(self , strLevel, strCate, strMessage ):
         cntRow = self.rowCount()
@@ -124,10 +113,24 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.editRev.setText(str(self.defaultRevision))
         self.dir = setting.value("savedir")
         self.chkSaveAndClear.setChecked(True)
-    def addLog(self, level, cate, message ):
+
+    def addLog(self, level, cate, message , isDB = False):
         if( self.logModel != None ) :
             self.logModel.addLog(level,cate,message)
             self.tableLog.setRowHeight( self.logModel.rowCount( ) - 1 , 15 )
+            if( isDB ) :
+                query = 'INSERT INTO bible.tb_mthx_action_log('\
+                        'errlevel'\
+                        ',category'\
+                        ',message'\
+                        ',cdatetime'\
+                        ' ) VALUES ('\
+                        '  "{}"'\
+                        ', "{}"'\
+                        ', "{}"'\
+                        ', NOW() '\
+                        ')'.format( level, cate, message )
+                self.db.commitQuery( query )
     def initTableView(self):
         queryPoemList = 'select \n' \
                         '   idx_mthx_poem,\n' \
@@ -152,12 +155,11 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.tableLog.setGridStyle( Qt.SolidLine )
         self.tableLog.setModel( self.logModel )
 
-        self.tableLog.setColumnWidth(0, 50)
-        self.tableLog.setColumnWidth(1, 80)
-        self.tableLog.setColumnWidth(2, 100)
-        self.tableLog.setColumnWidth(3, 300)
+        self.tableLog.setColumnWidth(0, 40)
+        self.tableLog.setColumnWidth(1, 40)
+        self.tableLog.setColumnWidth(2, 40)
+        self.tableLog.setColumnWidth(3, 500)
         self.tableLog.setRowHeight(0, 25)
-
 
     def initTreeView(self):
         # 데이터를 이렇게 만들어야 하는가.
@@ -256,6 +258,8 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
             print( strQuery )
             isOK = self.db.commitQuery( strQuery )
 
+
+
             # DB OK -> file writing
             print( isOK )
             if( isOK ) :
@@ -270,6 +274,9 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
                 f.write("*comment:\r\n" + strComment + "\r\n")
                 f.close()
                 if (self.chkSaveAndClear.isChecked()): self.slotBtnClear()
+                self.addLog("DB", "I", "inserting new data Idx:{} Title:{} Rev:{} is succeed.".format(strIndex , strTitle, strRev ) , True )
+            else :
+                self.addLog("DB", "E", "inserting new data Idx:{} Title:{} Rev:{} is failed.".format(strIndex , strTitle, strRev ) , True )
         else :
             print("[Info] Update Data ")
 
@@ -297,11 +304,12 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
             if ( strComment != self.query_ret[0]['comment']): isChangedComment = True;
             if ( isChangedRev or isChangedIndex ) :
                 print("[Error] Update Data ... Changing Revision is wrong case ")
+                self.addLog("DB", "E", "updating index or rev of poem isn't supported.")
             else :
                 if( isChangedContent == True ) :
-                    print( "[INFO] work to do" )
+                    self.addLog("DB", "W","updating content of poem isn't ready for data Idx:{} Title:{} Rev:{}.".format( strIndex, strTitle, strRev))
                 else :
-                    print( "[INFO] update database")
+                    self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{}.".format(strIndex, strTitle, strRev))
                     query_stat_update = 'UPDATE \n' \
                     ' bible.tb_mthx_poem_data \n' \
                     'SET  \n' \
@@ -313,7 +321,9 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
                     '  AND \n' \
                     ' revision = {}   \n'.format( strTitle , strComment, strDate , int(strIndex) , int(strRev))
                     print("we try to update database with query \n {} ".format( query_stat_update ))
-                    self.db.commitQuery( query_stat_update )
+                    ret = self.db.commitQuery( query_stat_update )
+                    if( ret ) : self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{} is succeed .".format(strIndex, strTitle, strRev) , True)
+                    else : self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{} isn't succeed .".format(strIndex, strTitle, strRev) , True)
             #self.UpdateTreeView()
 
     def UpdateTreeView(self):

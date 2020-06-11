@@ -16,7 +16,9 @@ from Mysql.libmysql import dbConMysql
 
 #1.open excel
 excel_name = "CreateTable.xlsx"
-sheet_name = "poem"
+
+#sheet_name = "poem"
+sheet_name = "thanksdiary"
 
 #2.read excel
 df_data = pd.read_excel( excel_name , sheet_name = sheet_name )  #대소문자 구분된다.
@@ -64,8 +66,9 @@ if( fieldPK == "" ) :
 #ret     = json.loads(jsonStr)
 #print( ret )
 
-config_db = {'user': 'root',          'password': 'karisma*3%7*4',          'host': 'mthx.cafe24.com',          'database': 'freedata',          'raise_on_warnings': True }
+config_db = {'user': 'root',          'password': 'karisma*3%7*4',          'host': 'mthx.cafe24.com',          'database': 'bible',          'raise_on_warnings': True }
 db      = dbConMysql(config_db)
+
 
 create_query_state = "CREATE TABLE `{table_name}` ( \n".format( table_name = sheet_name , )
 for key,val in mapDbSchema.items() :
@@ -79,39 +82,64 @@ for key,val in mapDbSchema.items() :
 
 create_query_state += "PRIMARY KEY (`{fieldPK}`)\n ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;".format(fieldPK=fieldPK )
 
-db.commitQuery( "drop table poem;")
+db.commitQuery( "drop table thanksdiary;")
 db.commitQuery( create_query_state )
+
 print( create_query_state )
+
+# 여기 자동화가 안되어 있네
+
+
 
 loop = 3
 lenIndex = len(df_data.index)
-while (True):
-    if (loop == lenIndex):
-        break
-    poem_id = df_data.iloc[loop , mapIdxCol['poem_id']]
-    poem_title =  df_data.iloc[loop , mapIdxCol['poem_title']]
-    poem_content = df_data.iloc[loop, mapIdxCol['poem_content']]
-    insert_query = "INSERT \n INTO\n freedata.poem(\n poem_id\n, poem_title\n , poem_content\n, poem_createdate\n, poem_registdate\n, poem_updatedate\n, poem_revision\n) VALUES ( \n"
-    insert_query += " {poem_id} , \"{poem_title}\" , \"{poem_content}\" , CURRENT_TIME() , CURRENT_TIME() , CURRENT_TIME() , 100 );".format(poem_id = poem_id , poem_title=poem_title , poem_content=poem_content)
-    #print( insert_query )
-    db.commitQuery(insert_query)
-    loop = loop + 1
-
-# 시가 입력이 잘 되었는지를 체크 , 개행까지 잘 저장된 것을 확인
 if( False ) :
-    listRet = db.selectQuery( "select poem_id, poem_content from poem" )
-    for elem in listRet :
-        print( elem['poem_content'])
+    while (True):
+        if (loop == lenIndex):
+            break
+        poem_id = df_data.iloc[loop , mapIdxCol['poem_id']]
+        poem_title =  df_data.iloc[loop , mapIdxCol['poem_title']]
+        poem_content = df_data.iloc[loop, mapIdxCol['poem_content']]
+        insert_query = "INSERT \n INTO\n freedata.poem(\n poem_id\n, poem_title\n , poem_content\n, poem_createdate\n, poem_registdate\n, poem_updatedate\n, poem_revision\n) VALUES ( \n"
+        insert_query += " {poem_id} , \"{poem_title}\" , \"{poem_content}\" , CURRENT_TIME() , CURRENT_TIME() , CURRENT_TIME() , 100 );".format(poem_id = poem_id , poem_title=poem_title , poem_content=poem_content)
+        #print( insert_query )
+        db.commitQuery(insert_query)
+        loop = loop + 1
 
+    # 시가 입력이 잘 되었는지를 체크 , 개행까지 잘 저장된 것을 확인
+    if( False ) :
+        listRet = db.selectQuery( "select poem_id, poem_content from poem" )
+        for elem in listRet :
+            print( elem['poem_content'])
+else :
+    print("------")
+    cnt = 0
+    query_stat = "insert into bible.{}(".format(sheet_name)
+    for key,val in mapDbSchema.items() :
+        if( cnt > 0 ) : query_stat += ","
+        query_stat += key
+        cnt = cnt + 1
+    query_stat += ") values ("
+    loop = 3
+    lenIndex = len(df_data.index)
+    print( query_stat )
 
+    while (True):
+        query_stat_cp = query_stat
+        if (loop == lenIndex):
+            break
+        cnt = 0
+        for key, val in mapDbSchema.items():
+            if (cnt > 0): query_stat_cp += ","
+            if ("varchar" in val['datatype']): query_stat_cp += '"'
+            cnt = cnt + 1
 
-
-
-
-
-
-
-
+            query_stat_cp += "{}".format( df_data.iloc[loop, mapIdxCol[key]] )
+            if ("varchar" in val['datatype']): query_stat_cp += '"'
+        query_stat_cp += ");"
+        ret = db.commitQuery(query_stat_cp)
+        print( "{} : {}".format( query_stat_cp,ret) )
+        loop = loop + 1
 
 
 
