@@ -8,12 +8,12 @@ from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 
-sys.path.append("../../Common")
+sys.path.append("../../../Common")
 from Mysql.libmysql import dbConMysql
 
 import codecs
 
-form_class = uic.loadUiType("PoemUtil.ui")[0]
+form_class = uic.loadUiType("../ui/PoemUtil.ui")[0]
 
 class Model( QStandardItemModel ) :
     def __init__(self, data):

@@ -9,11 +9,11 @@ from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtCore import Qt
 
-sys.path.append("../../Common")
+sys.path.append("../../../Common")
 from Mysql.libmysql import dbConMysql
 
 # duplicate from poemutil
-form_class = uic.loadUiType("ThanksDiary.ui")[0]
+form_class = uic.loadUiType("../ui/ThanksDiary.ui")[0]
 
 class Mthx_Thanks_Diary(QWidget, form_class):
     def __init__(self):
@@ -39,7 +39,7 @@ class Mthx_Thanks_Diary(QWidget, form_class):
 
         query_insert = 'INSERT '\
         'INTO '\
-        'bible.tb_mthx_thanks_diary( '\
+        'bible.thanksdiary( '\
         '`date` '\
         ', title '\
         ', comment '\
@@ -47,7 +47,7 @@ class Mthx_Thanks_Diary(QWidget, form_class):
         ', weight ' \
         ')'\
         'VALUES('\
-        ',{}'\
+        '{}'\
         ',"{}"'\
         ',"{}"'\
         ',"{}"' \

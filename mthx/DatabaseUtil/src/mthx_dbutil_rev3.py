@@ -7,12 +7,29 @@ from PyQt5.QtCore import QAbstractItemModel
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
+from PyQt5.QtCore import Qt
 
-sys.path.append("../../Common")
+sys.path.append("../../../Common")
 from Mysql.libmysql import dbConMysql
 
 # duplicate from poemutil
-form_class = uic.loadUiType("PoemUtil.ui")[0]
+form_class = uic.loadUiType("../ui/PoemUtil_tableview.ui")[0]
+
+class LogModel ( QStandardItemModel ) :
+    def __init__(self):
+        QStandardItemModel.__init__(self)
+
+    def addLog(self , strLevel, strCate, strMessage ):
+        cntRow = self.rowCount()
+        item1 = QStandardItem(str(int(cntRow)))
+        item2 = QStandardItem(strLevel)
+        item3 = QStandardItem(strCate)
+        item4 = QStandardItem(strMessage)
+        self.setItem(cntRow, 0, item1)
+        self.setItem(cntRow, 1, item2)
+        self.setItem(cntRow, 2, item3)
+        self.setItem(cntRow, 3, item4)
+        print("----")
 
 # Model clss for TreeView
 class Model( QStandardItemModel ) :
@@ -20,33 +37,35 @@ class Model( QStandardItemModel ) :
         QStandardItemModel.__init__(self)
         self.data = data
         self.makeItems()
-
     def makeItems(self) :
         # 아이템을 한개씩 만들어서 추가하는 식으로 보임.
         item = None
         rev = 0
-        idx = 0
-        self.CntItem = 0
+        cur_poem_idx = 0
+        cur_poem_title = ""
+        self.inserted_cnt = 0
         childCnt = 0
+
         for row in self.data:
-            # print(row)
+            print("{}, poem_idx{} , idx:{}".format( row , row['idx_mthx_poem'] , cur_poem_idx ))
             # changing of index (new poem)
-            if (row['idx_mthx_poem'] != idx):
-                if (item != None):
-                    string_name = "{}_{} ({})".format(idx, curtitle, childCnt)
-                    item.setText(string_name)
-                    self.setItem(self.CntItem, 0, item)
-                    self.CntItem = self.CntItem + 1
-                    childCnt = 0
-                string_name = "{}_{}".format(row['idx_mthx_poem'], row['curTitle'])
+            if (row['idx_mthx_poem'] != cur_poem_idx):
+                cur_poem_idx = row['idx_mthx_poem']
+                cur_poem_title = row['curTitle']
+                string_name = "{}_{}".format(cur_poem_idx, cur_poem_title)
                 item = QStandardItem(string_name)
-                idx = row['idx_mthx_poem']
-                curtitle = row['curTitle']
+                childCnt = 0
+                self.setItem(self.inserted_cnt, 0, item)
+                self.inserted_cnt = self.inserted_cnt + 1
+                print( "setItem CntItem:{} {}".format(self.inserted_cnt, cur_poem_title))
+                # string_name = "{}_{} ({})".format(cur_poem_idx, curtitle, childCnt)
+                # item.setText(string_name)
+
             # add child-item
             rev = row['revision']
             string_child_name = "{}_{}_rev{}".format(row['idx_mthx_poem'], row['curTitle'], rev )
             child_1 = QStandardItem(string_child_name)
-            child_2 = QStandardItem("{}".format(idx))
+            child_2 = QStandardItem("{}".format(cur_poem_idx))
             child_3 = QStandardItem("{}".format(rev))
             item.appendRow([child_1, child_2, child_3])
             childCnt = childCnt + 1
@@ -65,6 +84,11 @@ class Model( QStandardItemModel ) :
 class Mthx_Poem_DB_Util(QWidget, form_class):
     def __init__(self):
         super().__init__()
+
+        self.logModel = LogModel()
+        self.logModel.setColumnCount(4)
+        self.logModel.setHorizontalHeaderLabels(['id', 'level', 'cate1', 'messsage'])
+
         self.initConfig()
         self.setupUi(self)
         self.setLayout( self.mainHLayout ) # this makes attaching layout to main window
@@ -72,6 +96,7 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.connectUI()
         self.initDBMgs()
         self.initTreeView()
+        self.initTableView()
         self.initUI()
         self.show()
 
@@ -79,9 +104,10 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.defaultRevision = 5
 
     def initDBMgs(self):
-        config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
-                     'raise_on_warnings': True}
+        config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible','raise_on_warnings': True}
         self.db = dbConMysql(config_db)
+        if( self.db != None ) : self.addLog("I" , "DB" ,"Init OK")
+        else : self.addLog("E" , "DB" ,"Init Fail")
 
     def initUI(self):
         setting = QSettings("mthx" , "poemdbutil")
@@ -91,10 +117,56 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.dir = setting.value("savedir")
         self.chkSaveAndClear.setChecked(True)
 
+    def addLog(self, level, cate, message , isDB = False):
+        if( self.logModel != None ) :
+            self.logModel.addLog(level,cate,message)
+            self.tableLog.setRowHeight( self.logModel.rowCount( ) - 1 , 15 )
+            if( isDB ) :
+                query = 'INSERT INTO bible.tb_mthx_action_log('\
+                        'errlevel'\
+                        ',category'\
+                        ',message'\
+                        ',cdatetime'\
+                        ' ) VALUES ('\
+                        '  "{}"'\
+                        ', "{}"'\
+                        ', "{}"'\
+                        ', NOW() '\
+                        ')'.format( level, cate, message )
+                self.db.commitQuery( query )
+    def initTableView(self):
+        queryPoemList = 'select \n' \
+                        '   idx_mthx_poem,\n' \
+                        '   revision,\n' \
+                        '   maxrev,\n' \
+                        '   title,\n' \
+                        '   (select\n' \
+                        '       title from tb_mthx_poem_data as A where A.idx_mthx_poem  = B.idx_mthx_poem and A.revision  = B.revision) as curTitle\n' \
+                        'from\n' \
+                        '   (select\n' \
+                        '       idx_mthx_poem, revision, title, MAX(revision) as maxrev\n' \
+                        '   from\n' \
+                        '       tb_mthx_poem_data\n' \
+                        'group by\n' \
+                        '   idx_mthx_poem, revision) as B;'
+
+        QueryRet = self.db.selectQuery(queryPoemList)
+        print(QueryRet)
+
+        self.tableLog.setSortingEnabled( False );
+        self.tableLog.setShowGrid( True )
+        self.tableLog.setGridStyle( Qt.SolidLine )
+        self.tableLog.setModel( self.logModel )
+
+        self.tableLog.setColumnWidth(0, 40)
+        self.tableLog.setColumnWidth(1, 40)
+        self.tableLog.setColumnWidth(2, 40)
+        self.tableLog.setColumnWidth(3, 500)
+        self.tableLog.setRowHeight(0, 25)
+
     def initTreeView(self):
         # 데이터를 이렇게 만들어야 하는가.
         # QTreeView 생성 및 설정
-
         queryPoemList = 'select \n'\
         '   idx_mthx_poem,\n'\
         '   revision,\n'\
@@ -114,6 +186,8 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         print( "initTree view " )
         print( QueryRet )
 
+        if( len(QueryRet) != 0 ) : self.addLog("I","DB","Loading Poem List .. OK")
+        else : self.addLog("I","DB","Loading Poem List .. Failed")
 
         #make header for treeitem
         self.treePoems.setEditTriggers(QAbstractItemView.DoubleClicked)
@@ -187,6 +261,8 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
             print( strQuery )
             isOK = self.db.commitQuery( strQuery )
 
+
+
             # DB OK -> file writing
             print( isOK )
             if( isOK ) :
@@ -201,6 +277,9 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
                 f.write("*comment:\r\n" + strComment + "\r\n")
                 f.close()
                 if (self.chkSaveAndClear.isChecked()): self.slotBtnClear()
+                self.addLog("DB", "I", "inserting new data Idx:{} Title:{} Rev:{} is succeed.".format(strIndex , strTitle, strRev ) , True )
+            else :
+                self.addLog("DB", "E", "inserting new data Idx:{} Title:{} Rev:{} is failed.".format(strIndex , strTitle, strRev ) , True )
         else :
             print("[Info] Update Data ")
 
@@ -228,11 +307,12 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
             if ( strComment != self.query_ret[0]['comment']): isChangedComment = True;
             if ( isChangedRev or isChangedIndex ) :
                 print("[Error] Update Data ... Changing Revision is wrong case ")
+                self.addLog("DB", "E", "updating index or rev of poem isn't supported.")
             else :
                 if( isChangedContent == True ) :
-                    print( "[INFO] work to do" )
+                    self.addLog("DB", "W","updating content of poem isn't ready for data Idx:{} Title:{} Rev:{}.".format( strIndex, strTitle, strRev))
                 else :
-                    print( "[INFO] update database")
+                    self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{}.".format(strIndex, strTitle, strRev))
                     query_stat_update = 'UPDATE \n' \
                     ' bible.tb_mthx_poem_data \n' \
                     'SET  \n' \
@@ -244,7 +324,9 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
                     '  AND \n' \
                     ' revision = {}   \n'.format( strTitle , strComment, strDate , int(strIndex) , int(strRev))
                     print("we try to update database with query \n {} ".format( query_stat_update ))
-                    self.db.commitQuery( query_stat_update )
+                    ret = self.db.commitQuery( query_stat_update )
+                    if( ret ) : self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{} is succeed .".format(strIndex, strTitle, strRev) , True)
+                    else : self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{} isn't succeed .".format(strIndex, strTitle, strRev) , True)
             #self.UpdateTreeView()
 
     def UpdateTreeView(self):
