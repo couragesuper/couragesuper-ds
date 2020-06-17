@@ -7,12 +7,13 @@ from PyQt5.QtCore import QAbstractItemModel
 from PyQt5.QtWidgets import QAbstractItemView
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
+from PyQt5.QtGui import *
+
 
 import openpyxl
 
 sys.path.append("../../../Common")
 from Mysql.libmysql import dbConMysql
-
 
 form_class = uic.loadUiType("../ui/DLG_ExcelToDB.ui")[0]
 
@@ -39,6 +40,13 @@ class Dialog_ExcelToMysql(QWidget, form_class):
 
     def initUI(self):
         print("Dialog_ExcelToMysql::initUI")
+        self.setLayout( self.mainLayout )
+        self.mainLayout.setContentsMargins(16,16,16,16)
+        if( False ) :
+            resource_path ="../res/icon_backup.png"
+            pixmap = QtGui.QPixmap( ":/{}".format( resource_path ))
+            icon = QtGui.QIcon( pixmap )
+            self.setWindowIconText( icon )
 
     def initTreeView(self):
         print("Dialog_ExcelToMysql::initTreeView")
@@ -61,8 +69,10 @@ class Dialog_ExcelToMysql(QWidget, form_class):
         wb = openpyxl.load_workbook(self.filepath)
         for i in wb.get_sheet_names():
             self.sheetList.append(i)
+            self.cmbExcelSheets.addItem( i )
         print( self.sheetList )
         # TO do combo box and sheet selector
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
