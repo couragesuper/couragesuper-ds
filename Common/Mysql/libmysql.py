@@ -33,6 +33,17 @@ class dbConMysql:
         except Exception as e:
             print("[dbConMysql] selectQuery exception with={}:query:{} ".format(e,szQry))
             return []
+    def selectQueryWithRet(self, szQry):
+        try:
+            self.cursor = self.con.cursor(buffered=True)
+            self.cursor.execute(szQry)
+            listRet = [{self.cursor.description[i][0]: elem for i, elem in enumerate(row)} for row in self.cursor]
+            self.cursor.close()
+            return { "ret":True, "data":listRet }
+        except Exception as e:
+            print("[dbConMysql] selectQuery exception with={}:query:{} ".format(e, szQry))
+            return { "ret":False, "data":[] }
+
 
 isTest = False
 if( isTest ) :
