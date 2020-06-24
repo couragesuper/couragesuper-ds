@@ -26,6 +26,7 @@ pycharm & anaconda
 ### history
 Exel to mysql (2020.06.05)
 Mthx Flask Server (2020.06.05)
+Mthx PyQT 
 
 
 
