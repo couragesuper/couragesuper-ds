@@ -107,7 +107,15 @@ api_data = { "poemdata" : {"query" : 'select' \
                  ' (select idx_mthx_poem , max(revision) as MaxRev from tb_mthx_poem_data group by idx_mthx_poem) as tMaxRev' \
                  ' where' \
                  ' A.idx_mthx_poem = tMaxRev.idx_mthx_poem' \
-                 ' and A.revision = tMaxRev.MaxRev;' , "args" : [] }
+                 ' and A.revision = tMaxRev.MaxRev;' , "args" : [] },
+             "biblelist": { "query" : 'select biblebook_seq as seq , biblebook_type as type , biblebook_krnm as kname , biblebook_engnm as ename , biblebook_krsumnm as sumnm' \
+                                      ' from tBibleBook' \
+                                      ' where biblebook_type  = "{bible_type}";' , "args" : ["bible_type"] },
+             "bible_chapcnt_with_bookseq": {"query" : 'select book_seq, max(book_chap) as cntChap from tBibleCont where book_seq = {bookseq}' , "args" : ["bookseq"] },
+             "bible_view_o" : { "query" : 'select bible_seq as bibleseq , book_seq as bookseq, book_chap as bookchap, book_verse as verseseq, book_content as content from tBibleCont'\
+                                        ' where book_seq = {bookseq} and book_chap = {chapseq} and bible_seq = 3' , "args" : ["bookseq" ,"chapseq"]},
+             "bible_view_n" : { "query" : 'select bible_seq as bibleseq , book_seq as bookseq, book_chap as bookchap, book_verse as verseseq, book_content as content from tBibleCont'\
+                                        ' where book_seq = {bookseq} and book_chap = {chapseq} and bible_seq = 4' , "args" : ["bookseq" ,"chapseq"]},
              }
 
 @app.route("/api", methods=["GET", "POST"])
