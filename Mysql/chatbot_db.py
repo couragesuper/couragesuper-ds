@@ -3,7 +3,6 @@ import json
 sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 
-
 config_bot = {
           'user': 'root',
           'password': 'karisma*3%7*4',

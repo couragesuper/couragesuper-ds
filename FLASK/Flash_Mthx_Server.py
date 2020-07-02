@@ -1,5 +1,4 @@
 # conda install -c anaconda flask
-
 from flask import Flask
 from flask import Response
 from flask import request
@@ -56,12 +55,38 @@ def func_query_dict(  api_name , isDebug, query , requestarg , list_args = [] ):
         if (isDebug): print("api_command:{} query:{} is OK".format(api_name, query))
         return {"ret": True , "code":0 , "msg":"ok" , "cnt": len(Ret) , "data": Ret['data']}
 
+
+def func_query_dict_except(  api_name , isDebug, query , requestarg , list_args = [] ):
+    if( len( list_args ) > 0 ) :
+        dictArgs = requestarg.to_dict(flat=True )
+        cntNotContain = 0
+        for elem in list_args  :
+            if( elem not in dictArgs.keys() ) : cntNotContain = cntNotContain + 1
+        if( cntNotContain > 0 ) :
+            return {"ret": False, "code":1 , "msg":"invalid args", "cnt": 0, "data": []} # code 0 -- arg invali
+        print( dictArgs )
+        tquery = query.format(**dictArgs)
+    else : tquery = query
+    db = dbConMysql(config_db)
+    try :
+        print("api_command:{} query:{}".format( api_name , tquery ))
+        Ret = db.selectQueryWithRet(tquery)
+        if( Ret["ret"] == False ) :
+            if( isDebug ) : print("api_command:{} query:{} is FAIL".format( api_name , query ))
+            return {"ret": False , "code": 2 , "msg":"query fail", "cnt": 0 , "data": []}
+        else:
+            if (isDebug): print("api_command:{} query:{} is OK".format(api_name, query))
+            return {"ret": True , "code":0 , "msg":"ok" , "cnt": len(Ret) , "data": Ret['data']}
+    except Exception as e:
+        return {"ret": False, "code": 3, "msg": "query fail", "cnt": 0, "data": []}
+
+
 # global variables
 app = Flask(__name__)
 api = Api(app)
 config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
              'raise_on_warnings': True}
-db = dbConMysql(config_db)
+#db = dbConMysql(config_db)
 
 @app.route("/")
 def hello():
@@ -123,17 +148,15 @@ api_data = { "poemdata" : {"query" : 'select' \
 def api_command():
     api_command = request.args.get("cmd")
     if ( api_command in api_data.keys() ):
-        return func_query_dict( api_command , True, api_data[ api_command]["query"] , request.args , api_data[api_command]['args'] )
+        return func_query_dict_except( api_command , True, api_data[ api_command]["query"] , request.args , api_data[api_command]['args'] )
     else :
         return {"ret": False , "code":3 , "msg":"Not supported api" , "cnt": 0 , "data": []}
 
 
-
-
-
-if __name__ == '__main__':
-    if False :
-        app.run(debug=True , host='0.0.0.0')
-    else : #jupyer
-        from werkzeug.serving import run_simple
-        run_simple('0.0.0.0', 5005, app)
+if True :
+	if __name__ == '__main__':
+	    if False :
+	        app.run(debug=True , host='0.0.0.0')
+	    else : #jupyer
+	        from werkzeug.serving import run_simple
+	        run_simple('0.0.0.0', 5005, app)

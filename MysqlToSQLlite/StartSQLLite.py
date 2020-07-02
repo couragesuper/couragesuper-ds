@@ -21,6 +21,12 @@ if( isCreate ) :
     print(ret3['data'][0])
     ret4 = db.selectQueryWithRet("select * from tBibleQtCont")
     print(ret4['data'][0])
+    ret5 = db.selectQueryWithRet("select * from tBibleIWord")
+    print(ret5['data'][0])
+    ret6 = db.selectQueryWithRet("select * from tBibleIWordCont")
+    print(ret6['data'][0])
+
+
 
     con = sqlite3.connect("mthx.db")
     with con :
@@ -29,10 +35,16 @@ if( isCreate ) :
         create_query_tbibleBook = "CREATE TABLE tBibleBook (biblebook_seq int, biblebook_type text, biblebook_krnm text, biblebook_engnm text, biblebook_krsumnm text)"
         create_query_tbibleCont = "CREATE TABLE tBibleCont ( bible_seq int, book_seq int, book_chap int, book_verse int, book_content text)"
         create_query_tbibleqt = "CREATE TABLE tBibleQtCont(  bibleqt_seq int,  bibleqt_type int,  bibleqt_day int,  bibleqt_mon int,  bibltqt_content text, bibleqt_data text)"
+        create_query_tbibleIWord = "CREATE TABLE tBibleIWord (  bibleiword_seq int,  bibleiword_nm text,  bibleiword_desc text )"
+        create_query_tbibleIWordCont = "CREATE TABLE tBibleIWordCont (  bibleiword_seq int,  bibleiword_subseq int,  bibleiword_bookseq int,  bibleiword_chapseq int,  bibleiword_verse_begin int,  bibleiword_verse_end int ) "
+
         cursor.execute( create_query_tbible )
         cursor.execute( create_query_tbibleBook )
         cursor.execute( create_query_tbibleCont )
         cursor.execute( create_query_tbibleqt )
+        cursor.execute( create_query_tbibleIWord )
+        cursor.execute( create_query_tbibleIWordCont )
+
 
         #tBible
         print( "tBible" )
@@ -53,11 +65,22 @@ if( isCreate ) :
         # tBileCont
         print("tBibleQT")
         for elem in ret4['data']:
-            query = 'INSERT INTO tBibleQtCont VALUES ( %d, %d, %d, %d, "%s" , "%s" )' % (  elem['bibleqt_seq'],  elem['bibleqt_type'],
-                                                                                    elem['bibleqt_day'],  elem['bibleqt_mon'], elem['bibltqt_content'].replace('"', '""') , elem['bibleqt_data'].replace('"','""'))
+            query = 'INSERT INTO tBibleQtCont VALUES ( %d, %d, %d, %d, "%s" , "%s" )' % (  elem['bibleqt_seq'],  elem['bibleqt_type'], elem['bibleqt_day'],  elem['bibleqt_mon'], elem['bibltqt_content'].replace('"', '""') , elem['bibleqt_data'].replace('"','""'))
+            print(query)
+            cursor.execute(query)
+            print("tBibleQT")
+        for elem in ret5['data']:
+            query = 'insert into tBibleIWord (bibleiword_seq ,  bibleiword_nm ,  bibleiword_desc  ) values( {} , \"{}\", \"{}\" )'.format( elem['bibleiword_seq'] , elem['bibleiword_nm'].replace('"', '""') , elem['bibleiword_desc'].replace('"', '""'))
+            print(query)
+            cursor.execute(query)
+        print("tBibleQT")
+        for elem in ret6['data']:
+            query = 'insert into tBibleIWordCont ( bibleiword_seq ,  bibleiword_subseq ,  bibleiword_bookseq ,  bibleiword_chapseq ,  bibleiword_verse_begin ,  bibleiword_verse_end  )  values( {} , {} , {} ,{} ,{} ,  {})'.format(
+                elem['bibleiword_seq'], elem['bibleiword_subseq'], elem['bibleiword_bookseq'], elem['bibleiword_chapseq'], elem['bibleiword_verse_begin'],elem['bibleiword_verse_end'])
             print(query)
             cursor.execute(query)
         con.commit()
+
 
 #check sqlite3 database
 if( isCreate == False ) :
@@ -95,11 +118,20 @@ if( isCreate == False ) :
             for row in rows:
                 print(row)
 
-            query = "select * from tBibleQtCont where bibleqt_seq = {}".format(5)
+            query = "select * from tBibleIWord"
             cursor = con.cursor().execute(query)
             rows = cursor.fetchall()
             for row in rows:
                 print(row)
+
+            query = "select * from tBibleIWordCont"
+            cursor = con.cursor().execute(query)
+            rows = cursor.fetchall()
+            for row in rows:
+                print(row)
+
+
+
 
 
 

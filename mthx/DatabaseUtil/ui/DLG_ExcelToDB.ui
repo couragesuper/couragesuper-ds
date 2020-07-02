@@ -66,9 +66,9 @@
      </layout>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="btnConvert">
       <property name="text">
-       <string>PushButton</string>
+       <string>Convert</string>
       </property>
      </widget>
     </item>

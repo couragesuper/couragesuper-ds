@@ -5,7 +5,6 @@ import json
 sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 
-
 # Python Tips
     # pandas
     # (i.j) access of datafraem
