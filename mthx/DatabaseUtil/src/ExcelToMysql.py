@@ -10,6 +10,8 @@ from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import *
 
 
+# utility for convertor from Excel to Mysql
+
 import openpyxl
 
 sys.path.append("../../../Common")

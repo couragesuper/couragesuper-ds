@@ -12,6 +12,8 @@ from PyQt5.QtCore import Qt
 sys.path.append("../../../Common")
 from Mysql.libmysql import dbConMysql
 
+# utility for manager poem database
+
 # duplicate from poemutil
 form_class = uic.loadUiType("../ui/PoemUtil_tableview.ui")[0]
 
