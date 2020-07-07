@@ -6,6 +6,9 @@ import json
 import re
 import sys
 
+# JSON -> dict
+    # from cvtFearPraise
+
 config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
              'raise_on_warnings': True}
 db = dbConMysql(config_db)

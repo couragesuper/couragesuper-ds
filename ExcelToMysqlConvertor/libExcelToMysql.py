@@ -6,6 +6,8 @@ from pathlib import Path
 sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 
+#  move to common library
+
 class ExcelToMysql :
     def __init__(self , excelName ):
         print("ExcelToMysql __init__ :selected FileName :{}".format(excelName))

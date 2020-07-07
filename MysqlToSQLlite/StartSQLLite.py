@@ -5,7 +5,9 @@ import sqlite3
 
 isCreate = False
 
-#mysql -> sqlite3 database
+#mysql -> sqlite3 start sample
+#202007
+
 if( isCreate ) :
     print("sqlite3.version:{}".format(sqlite3.version))
     print("sqlite3.sqlite_version:{}".format(sqlite3.sqlite_version))

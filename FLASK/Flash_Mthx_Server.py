@@ -80,7 +80,6 @@ def func_query_dict_except(  api_name , isDebug, query , requestarg , list_args 
     except Exception as e:
         return {"ret": False, "code": 3, "msg": "query fail", "cnt": 0, "data": []}
 
-
 # global variables
 app = Flask(__name__)
 api = Api(app)
@@ -118,7 +117,6 @@ def query():
                                'group by book_seq, bible_seq'
     return func_query( "query" ,True , query_countof_chapInbook , [] )
 
-
 api_data = { "poemdata" : {"query" : 'select' \
                      ' idx_mthx_poem as idx, title, content, revision as rev' \
                      ' from' \
@@ -151,7 +149,6 @@ def api_command():
         return func_query_dict_except( api_command , True, api_data[ api_command]["query"] , request.args , api_data[api_command]['args'] )
     else :
         return {"ret": False , "code":3 , "msg":"Not supported api" , "cnt": 0 , "data": []}
-
 
 if True :
 	if __name__ == '__main__':

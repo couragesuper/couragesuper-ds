@@ -3,26 +3,36 @@ import json
 import re
 import sys
 
+# fear excel -> json
+
 sys.path.append("../../Common")
 from Mysql.libmysql import dbConMysql
 import pandas as pd
 
-config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
-                     'raise_on_warnings': True}
-db = dbConMysql(config_db)
-db2 = dbConMysql(config_db)
+# open db
+def openDB() :
+    config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
+                 'raise_on_warnings': True}
+    return dbConMysql(config_db)
+
+db = openDB()
+db2 = openDB()
+
+# get bibleQuery
 ret = db.selectQuery("select biblebook_seq as seq , biblebook_krnm as name , biblebook_krsumnm as sumnm from tBibleBook")
 print( ret )
+
 
 mapBibleSumnmToIdx = {}
 for elem in ret :
     mapBibleSumnmToIdx[ elem['sumnm']] = elem['seq']
 print( mapBibleSumnmToIdx )
 
+
+
 df_data = pd.read_excel("..\data\CreateTable.xlsx", sheet_name="fear")
 print ( df_data )
 mapIdxCol = {column: int(list(df_data).index(column)) for column in df_data.columns}
-
 
 def parseSearchEx( msg ) :
     #print("msg:{}".format(msg))
@@ -65,8 +75,10 @@ while( True ) :
         print( ret )
     loop = loop + 1
 
-
 print( setType )
+
+
+
 
 
 
