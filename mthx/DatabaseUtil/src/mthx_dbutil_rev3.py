@@ -17,6 +17,8 @@ from Mysql.libmysql import dbConMysql
 # duplicate from poemutil
 form_class = uic.loadUiType("../ui/PoemUtil_tableview.ui")[0]
 
+release_version ="20200707"
+
 class LogModel ( QStandardItemModel ) :
     def __init__(self):
         QStandardItemModel.__init__(self)
@@ -118,6 +120,7 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.editRev.setText(str(self.defaultRevision))
         self.dir = setting.value("savedir")
         self.chkSaveAndClear.setChecked(True)
+        self.setWindowTitle( "Mthx_Poem_Editor_" + release_version )
 
     def addLog(self, level, cate, message , isDB = False):
         if( self.logModel != None ) :
@@ -209,65 +212,66 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
 
         #self.treePoems.selectionModel().selectedChanged.connect( self.slotPoemTree )
 
-    def slotBtnSave(self):
+    def insertNewData(self , isNewPoem ):
+        # DB 에서 얻어서 부여해줄 것
+        strIndex = self.editNo.text()
+        strTitle = self.editTitle.text()
+        strDate = self.editDate.text()
 
-        if( self.query_ret == None ) :
-            print("[Info] insert new data ")
-            # get and check datatype
-            strIndex = self.editNo.text()
-            strTitle = self.editTitle.text()
-            strDate = self.editDate.text()
+        if( isNewPoem == False ) :
+            strRev = str( int(self.query_ret[0]['revision']) + 1 )
+        else :
             strRev = self.editRev.text()
-            strContent = self.editContent.toPlainText()
-            strComment = self.editComment.toPlainText()
+        strContent = self.editContent.toPlainText()
+        strComment = self.editComment.toPlainText()
 
-            # remove 2 line return chars
-            strContent = strContent.replace("\r\n\r\n\r\n" , "\r\n\r\n")
-            strContent = strContent.replace("\n\n\n", "\n\n")
-            strComment = strComment.replace("\r\n\r\n\r\n", "\r\n\r\n")
-            strComment = strComment.replace("\n\n\n", "\n\n")
+        # remove 2 line return chars
+        strContent = strContent.replace("\r\n\r\n\r\n", "\r\n\r\n")
+        strContent = strContent.replace("\n\n\n", "\n\n")
+        strComment = strComment.replace("\r\n\r\n\r\n", "\r\n\r\n")
+        strComment = strComment.replace("\n\n\n", "\n\n")
 
-            # propiling
-            print( strIndex.isdigit() )
-            print( strRev.isdigit() )
-            print( strDate.isdigit() )
+        # propiling
+        print(strIndex.isdigit())
+        print(strRev.isdigit())
+        print(strDate.isdigit())
 
-            # database query
-            # insert Query
-            strQueryHead = 'insert \n'\
-            'into \n'\
-            '`tb_mthx_poem_data` \n'\
-            '( \n'\
-                '`idx_mthx_poem` \n'\
-                ',`title` \n'\
-                ',`content` \n' \
-                ',`revision` \n'
+        # database query
+        # insert Query
+        strQueryHead = 'insert \n' \
+                       'into \n' \
+                       '`tb_mthx_poem_data` \n' \
+                       '( \n' \
+                       '`idx_mthx_poem` \n' \
+                       ',`title` \n' \
+                       ',`content` \n' \
+                       ',`revision` \n'
 
-            if( (strComment != None) ) : strQueryHead += ', `comment` \n'
-            if( strDate != None ) : strQueryHead += ', `cdate` \n'
+        if ((strComment != None)): strQueryHead += ', `comment` \n'
+        if (strDate != None): strQueryHead += ', `cdate` \n'
 
-            strQueryMid = ') \n'\
-            'VALUES \n'\
-            '( \n'
+        strQueryMid = ') \n' \
+                      'VALUES \n' \
+                      '( \n'
 
-            strQueryValues = strIndex + ', \n'
-            strQueryValues += '"' + strTitle + '", \n'
-            strQueryValues += '"' + strContent + '", \n'
-            strQueryValues += '"' + strRev + '" \n'
+        strQueryValues = strIndex + ', \n'
+        strQueryValues += '"' + strTitle + '", \n'
+        strQueryValues += '"' + strContent + '", \n'
+        strQueryValues += '"' + strRev + '" \n'
 
-            if ((strComment != None)): strQueryValues += ',"' + strComment + '"\n'
-            if (strDate != None): strQueryValues += ',' + strDate + '\n'
-            strQueryEnd = ');'
+        if ((strComment != None)): strQueryValues += ',"' + strComment + '"\n'
+        if (strDate != None): strQueryValues += ', NOW() \n'
+        strQueryEnd = ');'
 
-            strQuery = strQueryHead + strQueryMid + strQueryValues + strQueryEnd
-            print( strQuery )
-            isOK = self.db.commitQuery( strQuery )
+        strQuery = strQueryHead + strQueryMid + strQueryValues + strQueryEnd
+        print(strQuery)
+        isOK = self.db.commitQuery(strQuery)
 
-
-
+        # File Write is OFF now.
+        if False:
             # DB OK -> file writing
-            print( isOK )
-            if( isOK ) :
+            print(isOK)
+            if (isOK):
                 # file write
                 filename = self.dir + "\\mtxpoem_" + strIndex + "_Rev" + strRev + ".txt"
                 f = open(filename, "wt", encoding="utf-8")
@@ -279,12 +283,23 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
                 f.write("*comment:\r\n" + strComment + "\r\n")
                 f.close()
                 if (self.chkSaveAndClear.isChecked()): self.slotBtnClear()
-                self.addLog("DB", "I", "inserting new data Idx:{} Title:{} Rev:{} is succeed.".format(strIndex , strTitle, strRev ) , True )
-            else :
-                self.addLog("DB", "E", "inserting new data Idx:{} Title:{} Rev:{} is failed.".format(strIndex , strTitle, strRev ) , True )
+                self.addLog("DB", "I",
+                            "inserting new data Idx:{} Title:{} Rev:{} is succeed.".format(strIndex, strTitle, strRev),
+                            True)
+            else:
+                self.addLog("DB", "E",
+                            "inserting new data Idx:{} Title:{} Rev:{} is failed.".format(strIndex, strTitle, strRev),
+                            True)
+
+
+    def slotBtnSave(self):
+
+        if( self.query_ret == None ) :
+            print("[Info] insert new data ")
+            # get and check datatype
+            self.insertNewData( True )
         else :
             print("[Info] Update Data ")
-
             strIndex = self.editNo.text()
             strTitle = self.editTitle.text()
             strDate = self.editDate.text()
@@ -307,12 +322,14 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
             if ( int(strRev) != self.query_ret[0]['revision']): isChangedRev = True;
             if ( strContent != self.query_ret[0]['content']): isChangedContent = True;
             if ( strComment != self.query_ret[0]['comment']): isChangedComment = True;
-            if ( isChangedRev or isChangedIndex ) :
+
+            if ( isChangedIndex ) :
                 print("[Error] Update Data ... Changing Revision is wrong case ")
                 self.addLog("DB", "E", "updating index or rev of poem isn't supported.")
             else :
-                if( isChangedContent == True ) :
+                if( (isChangedRev == True) or (isChangedContent == True) or (isChangedTitle == True) ) :
                     self.addLog("DB", "W","updating content of poem isn't ready for data Idx:{} Title:{} Rev:{}.".format( strIndex, strTitle, strRev))
+                    self.insertNewData( False )
                 else :
                     self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{}.".format(strIndex, strTitle, strRev))
                     query_stat_update = 'UPDATE \n' \
