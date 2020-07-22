@@ -10,7 +10,7 @@ import sys
 
 config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
              'raise_on_warnings': True}
-db = dbConMysql(config_db)
+db  = dbConMysql(config_db)
 db2 = dbConMysql(config_db)
 ret = db.selectQueryWithRet("select * from tBibleQtCont")
 

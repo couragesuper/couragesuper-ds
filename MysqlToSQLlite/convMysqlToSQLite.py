@@ -7,13 +7,14 @@ import sqlite3
 isCreate = False
 
 # convertor mysql to sqlite
-# 20200707 :
-# bible
-# qt
-# poem
-# sermon
-# iword
+# 20200707 : (mthx_2nd)
+    # bible , qt , poem , sermon , iword
+# 20200714 : (mthx_3nd)
+    # add paragraph title to biblecont
+# 20200715: (mthx_4th)
+    # add word for praise
 
+dbName = "mthx_4th.db"
 
 # mysql -> sqlite3 database
 if (isCreate):
@@ -24,7 +25,7 @@ if (isCreate):
                  'raise_on_warnings': True}
     db = dbConMysql(config_db)
 
-    con = sqlite3.connect("mthx_2nd.db")
+    con = sqlite3.connect( dbName )
     with con:
         cursor = con.cursor()
         dictCreateQueries = {
@@ -36,9 +37,9 @@ if (isCreate):
                 "select": "select * from tBibleBook",
                 "insert": 'INSERT INTO tBibleBook VALUES( {biblebook_seq} , "{biblebook_type}" ,"{biblebook_krnm}" ,"{biblebook_engnm}", "{biblebook_krsumnm}")'}
             , "tbibleCont": {
-                "create": "CREATE TABLE tBibleCont ( bible_seq int, book_seq int, book_chap int, book_verse int, book_content text)",
-                "select": "select * from tBibleCont",
-                "insert": 'INSERT INTO tBibleCont VALUES( {bible_seq} , {book_seq} , {book_chap}, {book_verse} ,"{book_content}")'}
+                "create": "CREATE TABLE tBibleCont ( bible_seq int, book_seq int, book_chap int, book_verse int, book_content text, book_paratitle )",
+                "select": "select * from tBibleContV2",
+                "insert": 'INSERT INTO tBibleCont VALUES( {bible_seq} , {book_seq} , {book_chap}, {book_verse} ,"{book_content}" ,"{book_paratitle}" )'}
             , "tbibleqt": {
                 "create": "CREATE TABLE tBibleQtCont(  bibleqt_seq int,  bibleqt_type int,  bibleqt_day int,  bibleqt_mon int,  bibltqt_content text, bibleqt_data text)",
                 "select": "select * from tBibleQtCont",
@@ -59,51 +60,71 @@ if (isCreate):
                 "select" : "select * from tUccSermon",
                 "insert" : 'insert into tUccSermon ( idx , sdate , url, title , biblecontent , youtubeurl , content, succeed ) Values ( {idx} , "{sDate}" , "{url}", "{title}" , "{biblecontent}" , "{youtubeURL}" , "{content}", {succeed} )'
                 }
+            , "tWordForPraise": {
+                "create" : 'CREATE TABLE tWordForPray ( seq int, name text, word text, category1 text, category2 text)',
+                "select": "select * from tWordForPray",
+                "insert": 'insert into tWordForPray ( seq, name , word , category1 , category2 ) values ( {seq}  , "{name}" , "{word}" , "{category1}" , "{category2}")'
+                }
         }
 
         # idx, sdate, url, title, biblecontent, youtubeurl, content, succeed
-
+            # loop for query lists
         for query in dictCreateQueries.keys():
+            # perform .. create table
             print("query {}={}".format(query, dictCreateQueries[query]['create']))
             cursor.execute(dictCreateQueries[query]['create'])
+
+            # pull data from mysql server
             ret = db.selectQueryWithRet( dictCreateQueries[query]['select'] )
             for elem in ret['data'] :
                 for elem_field in elem.keys() :
+                    # handle tsermon
                     if( (query ==  "tsermon") and (elem_field == "youtubeURL") ) :
                         data = elem['youtubeURL']
                         if( data != None ) :
                             print( data.split("/")[4].split("?")[0])
                             elem[elem_field] = data.split("/")[4].split("?")[0]
+                    # handle string field
                     if( type( elem[elem_field] ) == str ) :
                         elem[elem_field] = elem[elem_field].replace('"', '""')
+
+                if( query == "tWordForPraise" ) : print( dictCreateQueries[query]['insert'].format(**elem) )
                 cursor.execute( dictCreateQueries[query]['insert'].format(**elem) )
         con.commit()
         exit(0)
 
 # check sqlite3 database
 if (isCreate == False):
-    con = sqlite3.connect("mthx_2nd.db")
+    con = sqlite3.connect( dbName )
     with con:
         # primary select query test
-        if False:
-            query = "select * from tBible"
-            cursor = con.cursor().execute(query)
-            rows = cursor.fetchall()
-            for row in rows:
-                print(row)
-            query = "select * from tBibleBook"
-            cursor = con.cursor().execute(query)
-            rows = cursor.fetchall()
-            for row in rows:
-                print(row)
-            query = "select * from tBibleCont"
+        if True:
+            if False :
+                query = "select * from tBible"
+                cursor = con.cursor().execute(query)
+                rows = cursor.fetchall()
+                for row in rows:
+                    print(row)
+                query = "select * from tBibleBook"
+                cursor = con.cursor().execute(query)
+                rows = cursor.fetchall()
+                for row in rows:
+                    print(row)
+                query = "select * from tBibleCont"
+                cursor = con.cursor().execute(query)
+                rows = cursor.fetchall()
+                for row in rows:
+                    print(row)
+            print("----")
+            query = "select * from tWordForPray"
             cursor = con.cursor().execute(query)
             rows = cursor.fetchall()
             for row in rows:
                 print(row)
 
+
         # query for biblebook list test
-        if True:
+        if False:
             if False :
                 query = "select book_seq, max(book_chap) as cntChap from tBibleCont where book_seq = {}".format(1)
                 cursor = con.cursor().execute(query)

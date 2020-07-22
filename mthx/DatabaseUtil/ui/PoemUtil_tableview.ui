@@ -254,7 +254,7 @@
      </spacer>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0,0,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0,0,0,0,0,0">
       <property name="spacing">
        <number>10</number>
       </property>
@@ -361,6 +361,20 @@
         </property>
         <property name="shortcut">
          <string>Ctrl+S</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnAddPrevRev">
+        <property name="text">
+         <string>add previous rev</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnAddNewRev">
+        <property name="text">
+         <string>add new rev</string>
         </property>
        </widget>
       </item>

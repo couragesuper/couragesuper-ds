@@ -158,7 +158,7 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         QueryRet = self.db.selectQuery(queryPoemList)
         print(QueryRet)
 
-        self.tableLog.setSortingEnabled( False );
+        self.tableLog.setSortingEnabled( False )
         self.tableLog.setShowGrid( True )
         self.tableLog.setGridStyle( Qt.SolidLine )
         self.tableLog.setModel( self.logModel )
@@ -188,56 +188,112 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         '   idx_mthx_poem, revision) as B;'\
 
         QueryRet = self.db.selectQuery( queryPoemList )
-        print( "initTree view " )
-        print( QueryRet )
+        #print( "initTree view " )
+        #print( QueryRet )
 
         if( len(QueryRet) != 0 ) : self.addLog("I","DB","Loading Poem List .. OK")
         else : self.addLog("I","DB","Loading Poem List .. Failed")
 
         #make header for treeitem
-        self.treePoems.setEditTriggers(QAbstractItemView.DoubleClicked)
+        self.treePoems.setEditTriggers( QAbstractItemView.DoubleClicked )
         self.model = Model( QueryRet )
 
         if (True) :
             self.model.setHorizontalHeaderLabels( ['title' ,'id' ,'rev'] )
-
         self.treePoems.setModel(self.model)
         self.treePoems.header().setSectionResizeMode( QHeaderView.ResizeToContents )
+
+    def slotAddPrevRev(self):
+        # insert slot
+        print( "[slotAddPrevRev]")
+
+        strIndex = self.editNo.text()
+        strTitle = self.editTitle.text()
+        strDate = self.editDate.text()
+        strRev = self.editRev.text()
+        strContent = self.editContent.toPlainText()
+        strComment = self.editComment.toPlainText()
+
+        isChangedIndex  = False
+        isChangedTitle  = False
+        isChangedDate   = False
+        isChangedRev    = False
+        isChangedContent = False
+        isChangedComment = False
+
+        #print(self.query_ret)
+
+        # check whether data is changed
+        if (int(strIndex) != self.query_ret[0]['idx_mthx_poem']): isChangedIndex = True
+        if (strTitle != self.query_ret[0]['title']): isChangedTitle = True
+        if (strDate != self.query_ret[0]['cdate']): isChangedDate = True
+        if (int(strRev) != self.query_ret[0]['revision']): isChangedRev = True
+        if (strContent != self.query_ret[0]['content']): isChangedContent = True
+        if (strComment != self.query_ret[0]['comment']): isChangedComment = True
+
+        if (isChangedIndex):
+            print("[Error] Not permiting when adding previous revision.")
+            self.addLog("DB", "E", "Not permiting when adding previous revision.")
+        elif( isChangedRev == False ) :
+            print("[Error] Changing revision is required when adding previous revision.")
+            self.addLog("DB", "E", "Changing revision is required when adding previous revision..")
+        else:
+            # 같은 revision이 있는지를 체크해  주어야 함.
+            queryCheck = "select count(*) as cnt from tb_mthx_poem_data where idx_mthx_poem  = {idx} and revision = {rev}".format(  idx = int(strIndex) , rev = int(strRev) )
+            print("[Changing revision] perform query {}.".format(queryCheck) )
+            ret = self.db.selectQueryWithRet ( queryCheck )
+            if( ret['ret'] == False ) :
+                print("[Error][Changing revision] query is failed.")
+                self.addLog("DB", "E", "[Error][Changing revision] query is failed.")
+                return
+            elif( int( ret['data'][0]['cnt'] ) != 0 ) :
+                print("[Error][Changing revision] same revision is already existed.")
+                self.addLog("DB", "E", "[Error][Changing revision] same revision is already existed.")
+            else:
+                self.insertNewData(True)
+                #self.initTreeView()
+
+    # use ordinnary function
+    def slotAddNewRev(self):
+        print( "slotAddNewRev" )
 
     def connectUI(self):
         self.btnSave.clicked.connect(self.slotBtnSave)
         self.btnClear.clicked.connect(self.slotBtnClear)
         self.btnOpen.clicked.connect(self.slotBtnOpen)
         self.treePoems.clicked.connect(self.slotPoemTree)
-
+        self.btnAddPrevRev.clicked.connect(self.slotAddPrevRev)
+        self.btnAddNewRev.clicked.connect(self.slotAddNewRev)
         #self.treePoems.selectionModel().selectedChanged.connect( self.slotPoemTree )
 
     def insertNewData(self , isNewPoem ):
-        # DB 에서 얻어서 부여해줄 것
         strIndex = self.editNo.text()
         strTitle = self.editTitle.text()
-        strDate = self.editDate.text()
+        strDate  = self.editDate.text()
 
+        print( "insertNewData:strDate : {}".format( strDate ) )
+
+        #New data has new date and revision
         if( isNewPoem == False ) :
             strRev = str( int(self.query_ret[0]['revision']) + 1 )
         else :
             strRev = self.editRev.text()
+
         strContent = self.editContent.toPlainText()
         strComment = self.editComment.toPlainText()
 
-        # remove 2 line return chars
+        # Remove 2 line return chars
         strContent = strContent.replace("\r\n\r\n\r\n", "\r\n\r\n")
         strContent = strContent.replace("\n\n\n", "\n\n")
         strComment = strComment.replace("\r\n\r\n\r\n", "\r\n\r\n")
         strComment = strComment.replace("\n\n\n", "\n\n")
 
-        # propiling
-        print(strIndex.isdigit())
-        print(strRev.isdigit())
-        print(strDate.isdigit())
+        # Propiling
+            #print( strIndex.isdigit() )
+            #print( strRev.isdigit() )
+            #print( strDate.isdigit() )
 
-        # database query
-        # insert Query
+        # Database Query / insert Query
         strQueryHead = 'insert \n' \
                        'into \n' \
                        '`tb_mthx_poem_data` \n' \
@@ -260,7 +316,8 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         strQueryValues += '"' + strRev + '" \n'
 
         if ((strComment != None)): strQueryValues += ',"' + strComment + '"\n'
-        if (strDate != None): strQueryValues += ', NOW() \n'
+        if (strDate != None): strQueryValues += ',"' + strDate  +  '"\n'
+        else : strQueryValues += ', NOW() \n'
         strQueryEnd = ');'
 
         strQuery = strQueryHead + strQueryMid + strQueryValues + strQueryEnd
@@ -293,7 +350,6 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
 
 
     def slotBtnSave(self):
-
         if( self.query_ret == None ) :
             print("[Info] insert new data ")
             # get and check datatype
@@ -350,6 +406,7 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
 
     def UpdateTreeView(self):
         print("update tree view")
+
 
     def slotBtnClear(self):
         strIndex = self.editNo.clear()

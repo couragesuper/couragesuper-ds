@@ -23,6 +23,36 @@ class dbConMysql:
         except Exception as e:
             print("[dbConMysql] commitquery = {},e:{}".format( szQry , e ) )
             return False
+
+    def Lock(self):
+        try:
+            self.cursorCommit = self.con.cursor(buffered=True)
+            return True
+        except Exception as e:
+            print("[dbConMysql] Lock e:{}".format( e))
+            return False
+
+    def LockQuery(self,szQry):
+        if (self.cursorCommit != None) :
+            try:
+                self.cursorCommit.execute(szQry)
+            except Exception as e:
+                print("[dbConMysql] LockQuery e:{}".format( e))
+                return False
+        else :
+            return False
+        return True
+
+    def unLock(self):
+        try:
+            self.cursorCommit.close()
+            self.cursorCommit = None
+            self.con.commit()
+            return True
+        except Exception as e:
+            print("[dbConMysql] unLock e:{}".format( e))
+            return False
+
     def selectQuery(self,szQry):
         try:
             self.cursor = self.con.cursor(buffered = True)

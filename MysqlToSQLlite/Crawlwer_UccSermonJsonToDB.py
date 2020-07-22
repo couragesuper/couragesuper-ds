@@ -5,17 +5,13 @@ import os
 sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 
-
-
 from time import sleep
 from selenium import webdriver
 import json
 import re
 
-
 from time import sleep
 import json
-
 
 config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
              'raise_on_warnings': True}
