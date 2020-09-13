@@ -28,8 +28,6 @@ if( isCreate ) :
     ret6 = db.selectQueryWithRet("select * from tBibleIWordCont")
     print(ret6['data'][0])
 
-
-
     con = sqlite3.connect("mthx.db")
     with con :
         cursor = con.cursor()
