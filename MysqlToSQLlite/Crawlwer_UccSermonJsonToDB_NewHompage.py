@@ -179,11 +179,16 @@ else :
 
         biblecontent = ""
 
+        print( arr_content )
+
         for elem in arr_content :
             for biblename in listBibleName :
                 if( biblename in elem ) :
                     if( biblecontent != "" ) : biblecontent += " / "
                     biblecontent += elem
+                    print("biblename:{}".format(biblename))
+
+        print( biblecontent)
 
         url = wd.find_elements_by_class_name("fluid-width-video-wrapper")[0].find_elements_by_tag_name("iframe")[0].get_attribute("src")
         print( title , url )
@@ -209,11 +214,21 @@ else :
         dicData["youtubeURL"] = revlistMissedSermon[i]["youtubeURL"]
         dicData["url"] = revlistMissedSermon[i]["url"]
         listToken = dicData["title"].split("(")
-        dicData["sDate"] = listToken[ len(listToken) - 1 ].replace(")","")
+        szDate = listToken[len(listToken) - 1].replace(")", "")
+        if((szDate ).isdigit() ) :
+            dicData["sDate"] = szDate
+        else :
+            dicData["sDate"] = "20200914"
         dicData["succeed"] = 1
-        dicData["biblecontent"] = revlistMissedSermon[i]["content"]
-        dicData["content"] = revlistMissedSermon[i]["content"]
+
+        if( len( revlistMissedSermon[i]["content"] ) < 100 ) :
+            dicData["biblecontent"] = revlistMissedSermon[i]["content"]
+            dicData["content"] = revlistMissedSermon[i]["content"]
+        else:
+            dicData["biblecontent"] = ""
+            dicData["content"] = ""
         realQuery = query.format(**dicData)
+        print( realQuery )
         db2.commitQuery( realQuery )
         print(dicData)
 

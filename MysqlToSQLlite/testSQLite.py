@@ -16,9 +16,15 @@ isTestBible = False
 isTestWordForPray = False
 isTestIWordQt = False
 isTestSermon = False
-isTestAppLog = True
+isTestAppLog = False
 
-dbName = "mthx_7th.db"
+isPara = False
+
+#dbName = "mthx_7th.db"
+dbName = "bible_20200908.db"
+
+print("---")
+
 con = sqlite3.connect( dbName )
 with con:
     # primary select query test
@@ -91,9 +97,46 @@ with con:
         print("size{}".format(len(rows)))
         for row in rows:
             print(row)
+    if isPara :
+        print("----")
+        #query = "select * from tUccSermon where sdate like '%2012%' "
+        query = "select bible_seq , book_seq , book_chap , book_verse, book_paratitle from tBibleCont where (bible_seq = 3 or bible_seq = 4 )and  book_paratitle != 'None' "
+        cursor = con.cursor().execute(query)
+        rows = cursor.fetchall()
+        print("size{}".format( len(rows) ))
+        for row in rows:
+            print(row)
 
 
+dbName = "setting_20201002.db"
+con2 = sqlite3.connect( dbName )
+with con2 :
+    query = "select attrvalue, attrname from tSetting"
+    cursor = con2.cursor().execute(query)
+    rows = cursor.fetchall()
+    print("size{}".format(len(rows)))
+    for row in rows:
+        print(row)
 
+    query = "update tSetting set attrvalue = '11111' where attrname = 'appver';"
+    cursor = con2.cursor().execute(query)
+
+    query = "select attrvalue, attrname from tSetting"
+    cursor = con2.cursor().execute(query)
+    rows = cursor.fetchall()
+    print("size{}".format(len(rows)))
+    for row in rows:
+        print(row)
+
+    query = "update tSetting set attrvalue = '22222' where attrname = 'appver';"
+    cursor = con2.cursor().execute(query)
+
+    query = "select attrvalue, attrname from tSetting"
+    cursor = con2.cursor().execute(query)
+    rows = cursor.fetchall()
+    print("size{}".format(len(rows)))
+    for row in rows:
+        print(row)
 
 
 

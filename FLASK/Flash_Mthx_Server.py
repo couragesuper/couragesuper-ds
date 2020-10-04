@@ -83,7 +83,7 @@ def func_query_dict_except(  api_name , isDebug, query , requestarg , list_args 
 # global variables
 app = Flask(__name__)
 api = Api(app)
-config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'bible',
+config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.com', 'database': 'mthx_app',
              'raise_on_warnings': True}
 #db = dbConMysql(config_db)
 
@@ -139,13 +139,38 @@ api_data = { "poemdata" : {"query" : 'select' \
                                         ' where book_seq = {bookseq} and book_chap = {chapseq} and bible_seq = 3' , "args" : ["bookseq" ,"chapseq"]},
              "bible_view_n" : { "query" : 'select bible_seq as bibleseq , book_seq as bookseq, book_chap as bookchap, book_verse as verseseq, book_content as content from tBibleCont'\
                                         ' where book_seq = {bookseq} and book_chap = {chapseq} and bible_seq = 4' , "args" : ["bookseq" ,"chapseq"]},
+             "swinfo" : { "query" : 'select Date, app_version, bible_version, summon_version, extra1_version , extra2_version,  extra3_version , description from tVersionInfo order by idx desc limit 1;' , "args" : [] }
              }
+
+@app.route("/swinfo", methods=["GET", "POST"])
+@dictToJson
+def swinfo():
+    db_local = dbConMysql(config_db)
+    query_appver = "select attrname , attrvalue from tSetting where attrname = 'appver'"
+    ret_appdbver = db_local.selectQueryWithRet( query_appver )
+
+    query_biblever = "select attrname , attrvalue from tSetting where attrname = 'bibledbver'"
+    ret_bibledbver = db_local.selectQueryWithRet(query_biblever)
+
+    query_contentver = "select attrname , attrvalue from tSetting where attrname = 'contentdbver'"
+    ret_contentver = db_local.selectQueryWithRet(query_contentver)
+
+    print( ret_appdbver['data'][0]['attrvalue'] )
+    print(ret_bibledbver['data'][0]['attrvalue'])
+    print(ret_contentver['data'][0]['attrvalue'])
+
+    dicSwinfo = {"appver": ret_appdbver['data'][0]['attrvalue'], "bibledbver": ret_bibledbver['data'][0]['attrvalue'],
+     "contentdbver": ret_contentver['data'][0]['attrvalue']}
+
+    return dicSwinfo
 
 @app.route("/api", methods=["GET", "POST"])
 @dictToJson
 def api_command():
     api_command = request.args.get("cmd")
+    print( api_command )
     if ( api_command in api_data.keys() ):
+        print( "api{} is found".format( api_command ) )
         return func_query_dict_except( api_command , True, api_data[ api_command]["query"] , request.args , api_data[api_command]['args'] )
     else :
         return {"ret": False , "code":3 , "msg":"Not supported api" , "cnt": 0 , "data": []}

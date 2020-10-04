@@ -1,9 +1,11 @@
 import sys
+import os
+
 
 sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 import sqlite3
-
+import urllib
 
 # convertor mysql to sqlite
 # 20200707 : (mthx_2nd)
@@ -13,9 +15,21 @@ import sqlite3
 # 20200715: (mthx_4th)
     # add word for praise
 # 20200908 : splitting version
+# 20200919 : make final url
+# 20200922 : bible (paragraph)
 
-dbName_Bible = "bible_20200908.db"
-dbName_Content = "shinechurch_20200908.db"
+
+ver_bible = "20201002"
+ver_content = "20201002"
+ver_setting = "20201002"
+
+dbName_Bible = "bible_{}.db".format( ver_bible )
+dbName_Content = "shinechurch_{}.db".format( ver_content )
+dbName_Setting = "setting_{}.db".format( ver_setting )
+
+if os.path.exists( dbName_Bible ) : os.remove( dbName_Bible )
+if os.path.exists( dbName_Content ) : os.remove( dbName_Content )
+if os.path.exists( dbName_Setting ) : os.remove( dbName_Setting )
 
 # mysql -> sqlite3 database
 
@@ -28,8 +42,10 @@ config_db = {'user': 'root', 'password': 'karisma*3%7*4', 'host': 'mthx.cafe24.c
              'raise_on_warnings': True}
 
 db = dbConMysql(config_db)
+
 con_bible = sqlite3.connect( dbName_Bible )
 con_cont = sqlite3.connect( dbName_Content )
+con_setting = sqlite3.connect( dbName_Setting )
 
 with con_bible:
     cursor = con_bible.cursor()
@@ -92,6 +108,12 @@ with con_bible:
         , "tAppLog": {
             "create": 'CREATE TABLE tAppLog ( log_seq integer primary key AUTOINCREMENT , cdate text , log_lvl int , log text )',
             "isInsert": False
+        },
+        "tBibleIWordContAdv2": {
+            "create": "CREATE TABLE tBibleIWordContAdv2 ( iw_cateid int, iw_seq int, iw_subseq int, iw_subsubseq int, iw_content text, iw_bookseq int, iw_chapseq int, iw_verse_begin int, iw_verse_end int, book_contentk text, book_contente text )",
+            "select": "select * from tBibleIWordContAdv2",
+            "insert": 'insert into tBibleIWordContAdv2 ( iw_cateid , iw_seq , iw_subseq , iw_subsubseq , iw_content , iw_bookseq , iw_chapseq , iw_verse_begin , iw_verse_end , book_contentk , book_contente  ) Values ( {iw_cateid} , {iw_seq} , {iw_subseq} , {iw_subsubseq} , "{iw_content}" , {iw_bookseq} , {iw_chapseq} , {iw_verse_begin} , {iw_verse_end} , "{book_contentk}" , "{book_contente}"  )'
+            , "isInsert": True
         }
 
     }
@@ -107,6 +129,10 @@ with con_bible:
             for elem in ret['data'] :
                 for elem_field in elem.keys() :
                     # handle tsermon
+                    if( elem_field == 'url') :
+                        #https://stackoverflow.com/questions/3556266/how-can-i-get-the-final-redirect-url-when-using-urllib2-urlopen/3556287
+                        elem['url'] = urllib.urlopen( elem['url'] ).geturl()
+
                     if( (query ==  "tsermon") and (elem_field == "youtubeURL") ) :
                         data = elem['youtubeURL']
                         if( data != None ) :
@@ -122,15 +148,53 @@ with con_bible:
 
 with con_cont:
     cursor = con_cont.cursor()
+    # idx, sdate, url, title, biblecontent, youtubeurl, content, succeed
     dictCreateQueries = {
         "tsermon": {
             "create" : "CREATE TABLE tUccSermon ( idx int , sdate text, url text, title text, biblecontent text, youtubeurl text , content text, succeed int )",
             "select" : "select * from tUccSermon",
             "insert" : 'insert into tUccSermon ( idx , sdate , url, title , biblecontent , youtubeurl , content, succeed ) Values ( {idx} , "{sDate}" , "{url}", "{title}" , "{biblecontent}" , "{youtubeURL}" , "{content}", {succeed} )'
             , "isInsert": True
-        }
+        },
+        "tUccSermonRecommend": {
+            "create": "CREATE TABLE tUccSermonRecommend ( idx int , sdate text, url text, title text, biblecontent text, youtubeurl text , content text, succeed int )",
+            "select": "select * from tUccSermonRecommend",
+            "insert": 'insert into tUccSermonRecommend ( idx , sdate , url, title , biblecontent , youtubeurl , content, succeed ) Values ( {idx} , "{sDate}" , "{url}", "{title}" , "{biblecontent}" , "{youtubeURL}" , "{content}", {succeed} )'
+            , "isInsert": True
+        },
+        "tUccSermonCTS": {
+            "create": "CREATE TABLE tUccSermonCTS ( idx int , sdate text, url text, title text, biblecontent text, youtubeurl text , content text, succeed int )",
+            "select": "select * from tUccSermonCTS",
+            "insert": 'insert into tUccSermonCTS ( idx , sdate , url, title , biblecontent , youtubeurl , content, succeed ) Values ( {idx} , "{sDate}" , "{url}", "{title}" , "{biblecontent}" , "{youtubeURL}" , "{content}", {succeed} )'
+            , "isInsert": True
+        },
+        "tUccSermonCTS2": {
+            "create": "CREATE TABLE tUccSermonCTS2 ( idx int , sdate text, url text, title text, biblecontent text, youtubeurl text , content text, succeed int )",
+            "select": "select * from tUccSermonCTS2",
+            "insert": 'insert into tUccSermonCTS2 ( idx , sdate , url, title , biblecontent , youtubeurl , content, succeed ) Values ( {idx} , "{sDate}" , "{url}", "{title}" , "{biblecontent}" , "{youtubeURL}" , "{content}", {succeed} )'
+            , "isInsert": True
+        },
+        "tUccSermonCTS3": {
+            "create": "CREATE TABLE tUccSermonCTS3 ( idx int , sdate text, url text, title text, biblecontent text, youtubeurl text , content text, succeed int )",
+            "select": "select * from tUccSermonCTS3",
+            "insert": 'insert into tUccSermonCTS3 ( idx , sdate , url, title , biblecontent , youtubeurl , content, succeed ) Values ( {idx} , "{sDate}" , "{url}", "{title}" , "{biblecontent}" , "{youtubeURL}" , "{content}", {succeed} )'
+            , "isInsert": True
+        },
+        "tUccSermon_DawnJeja": {
+            "create": "CREATE TABLE tUccSermon_DawnJeja ( idx int , sdate text, url text, title text, biblecontent text, youtubeurl text , content text, succeed int, type text, txt text )",
+            "select": "select * from tUccSermon_DawnJeja",
+            "insert": 'insert into tUccSermon_DawnJeja ( idx , sdate , url, title , biblecontent , youtubeurl , content, succeed , type , txt ) Values ( {idx} , "{sDate}" , "{url}", "{title}" , "{biblecontent}" , "{youtubeURL}" , "{content}", {succeed}, "{type}" , "txt" )'
+            , "isInsert": True
+        },
+        #INSERT INTO tUccShineContent(sDate, url, title, type, youtubeURL, succeed) VALUES('{sDate}', '{url}', '{title}', {type},'{youtubeURL}', '{succeed}')
+        "tUccShineContent": {
+            "create": "CREATE TABLE tUccShineContent ( idx int , sDate text, url text, title text, type text, youtubeURL text, succeed text )",
+            "select": "select * from tUccShineContent",
+            "insert": 'insert into tUccShineContent ( idx ,  sDate, url, title, type, youtubeURL, succeed  ) Values ( {idx}, "{sDate}", "{url}", "{title}", {type},"{youtubeURL}", "{succeed}" )'
+            , "isInsert": True
+        },
+
     }
-    # idx, sdate, url, title, biblecontent, youtubeurl, content, succeed
         # loop for query lists
     for query in dictCreateQueries.keys():
         # perform .. create table
@@ -155,4 +219,47 @@ with con_cont:
                 cursor.execute( dictCreateQueries[query]['insert'].format(**elem) )
     con_cont.commit()
 
+with con_setting:
+    cursor = con_setting.cursor()
+    # idx, sdate, url, title, biblecontent, youtubeurl, content, succeed
+    dictCreateQueries = {
+        "tSetting": {
+            "create": "CREATE TABLE tSetting ( attrname text , attrvalue text , desc text )",
+            "select": "select * from tSetting",
+            "insert": 'insert into tSetting ( attrname , attrvalue, desc  ) Values ( "{attrname}" , "{attrvalue}", "{desc}" )'
+            , "isInsert": True
+        },
+    }
+        # loop for query lists
+    for query in dictCreateQueries.keys():
+        # perform .. create table
+        print("query {}={}".format(query, dictCreateQueries[query]['create']))
+        cursor.execute(dictCreateQueries[query]['create'])
+        if( dictCreateQueries[query]['isInsert'] == True ) :
+            # pull data from mysql server
+            ret = db.selectQueryWithRet( dictCreateQueries[query]['select'] )
+            for elem in ret['data'] :
+                for elem_field in elem.keys() :
+                    # handle tsermon
+                    if( (query ==  "tsermon") and (elem_field == "youtubeURL") ) :
+                        data = elem['youtubeURL']
+                        if( data != None ) :
+                            print( data.split("/")[4].split("?")[0])
+                            elem[elem_field] = data.split("/")[4].split("?")[0]
+                    # handle string field
+                    if( type( elem[elem_field] ) == str ) :
+                        elem[elem_field] = elem[elem_field].replace('"', '""')
+
+                if( query == "tWordForPraise" ) : print( dictCreateQueries[query]['insert'].format(**elem) )
+                cursor.execute( dictCreateQueries[query]['insert'].format(**elem) )
+    con_setting.commit()
+
+
+query_update_bibledb = 'update tSetting set attrvalue = "{ver_bible}" where attrname = "bibledbver";'.format(ver_bible= ver_bible)
+query_update_contentdb = 'update tSetting set attrvalue = "{ver_content}" where attrname = "contentdbver";'.format(ver_content = ver_content)
+
+db.commitQuery( query_update_bibledb )
+db.commitQuery( query_update_contentdb )
+
 exit(0)
+
