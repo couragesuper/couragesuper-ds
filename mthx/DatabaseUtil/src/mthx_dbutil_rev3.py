@@ -256,6 +256,10 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
     # use ordinnary function
     def slotAddNewRev(self):
         print( "slotAddNewRev" )
+        self.editDate.clear()
+        self.editRev.clear()
+        self.editContent.clear()
+        self.editComment.clear()
 
     def connectUI(self):
         self.btnSave.clicked.connect(self.slotBtnSave)
@@ -264,6 +268,8 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         self.treePoems.clicked.connect(self.slotPoemTree)
         self.btnAddPrevRev.clicked.connect(self.slotAddPrevRev)
         self.btnAddNewRev.clicked.connect(self.slotAddNewRev)
+        self.btnReload.clicked.connect(self.UpdateTreeView)
+
         #self.treePoems.selectionModel().selectedChanged.connect( self.slotPoemTree )
 
     def insertNewData(self , isNewPoem ):
@@ -274,10 +280,12 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
         print( "insertNewData:strDate : {}".format( strDate ) )
 
         #New data has new date and revision
-        if( isNewPoem == False ) :
-            strRev = str( int(self.query_ret[0]['revision']) + 1 )
-        else :
-            strRev = self.editRev.text()
+        #if( isNewPoem == False ) :
+        #    strRev = str( int(self.query_ret[0]['revision']) + 1 )
+        #else :
+            #strRev = self.editRev.text()
+        #replace above code
+        strRev = self.editRev.text()
 
         strContent = self.editContent.toPlainText()
         strComment = self.editComment.toPlainText()
@@ -402,11 +410,11 @@ class Mthx_Poem_DB_Util(QWidget, form_class):
                     ret = self.db.commitQuery( query_stat_update )
                     if( ret ) : self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{} is succeed .".format(strIndex, strTitle, strRev) , True)
                     else : self.addLog("DB", "I","updating of poem for data Idx:{} Title:{} Rev:{} isn't succeed .".format(strIndex, strTitle, strRev) , True)
-            #self.UpdateTreeView()
+            self.UpdateTreeView()
 
     def UpdateTreeView(self):
         print("update tree view")
-
+        self.initTableView()
 
     def slotBtnClear(self):
         strIndex = self.editNo.clear()

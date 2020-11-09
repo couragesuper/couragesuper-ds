@@ -65,9 +65,9 @@
        <widget class="QTableView" name="tableLog"/>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="btnReload">
         <property name="text">
-         <string>PushButton</string>
+         <string>reload tree</string>
         </property>
        </widget>
       </item>
