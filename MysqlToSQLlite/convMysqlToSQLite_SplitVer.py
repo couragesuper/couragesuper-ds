@@ -1,7 +1,6 @@
 import sys
 import os
 
-
 sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 import sqlite3
@@ -18,10 +17,9 @@ import urllib
 # 20200919 : make final url
 # 20200922 : bible (paragraph)
 
-
 ver_bible = "20201002"
-ver_content = "20201002"
-ver_setting = "20201002"
+ver_content = "20201105"
+ver_setting = "20201105"
 
 dbName_Bible = "bible_{}.db".format( ver_bible )
 dbName_Content = "shinechurch_{}.db".format( ver_content )

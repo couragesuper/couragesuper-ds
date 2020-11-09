@@ -89,91 +89,97 @@ def proc_xml_indent(elem, level=0):
 
 wd = InitWebDriver( False, False )
 
-url = "http://www.shinechurch.or.kr/%EC%98%88%EB%B0%B0%EC%99%80-%EB%A7%90%EC%94%80/%EC%83%88%EB%B2%BD%EC%A0%9C%EC%9E%90%ED%9B%88%EB%A0%A8/?pageid=1&mod=list"
-maxpage = 0
+def crawler_dawnjeja() :
+    url = "http://www.shinechurch.or.kr/%EC%98%88%EB%B0%B0%EC%99%80-%EB%A7%90%EC%94%80/%EC%83%88%EB%B2%BD%EC%A0%9C%EC%9E%90%ED%9B%88%EB%A0%A8/?pageid=1&mod=list"
+    maxpage = 0
 
-OpenWebPage(wd, url, False)
-elems = wd.find_elements_by_class_name("last-page")
-print( "maxpage:{}".format( len(elems) ) )
+    OpenWebPage(wd, url, False)
+    elems = wd.find_elements_by_class_name("last-page")
+    print( "maxpage:{}".format( len(elems) ) )
 
+    listSermon = []
 
-
-listSermon = []
-
-for elem in elems :
-    elems_a_tag = elem.find_elements_by_tag_name("a")
-    print( len(elems_a_tag) )
-    for elem_a_tag in elems_a_tag :
-        href = elem_a_tag.get_attribute("href")
-        if False :
-            print( href )
-            print( str( href ).split("?")[1] )
-            toks = str(href).split("?")[1]
-            print( toks.split("&")[0].split("=")[1])
-        maxpage = int( str(href).split("?")[1].split("&")[0].split("=")[1] )
-        print( maxpage )
-
-
-
-url_for_page = "http://www.shinechurch.or.kr/%EC%98%88%EB%B0%B0%EC%99%80-%EB%A7%90%EC%94%80/%EC%83%88%EB%B2%BD%EC%A0%9C%EC%9E%90%ED%9B%88%EB%A0%A8/?pageid={page}&mod=list"
-for nPage in range(1, maxpage + 1) :
-    url_target = url_for_page.format(page=nPage)
-    OpenWebPage(wd, url_target, False)
-    class_name="kboard-list"
-    elems = wd.find_elements_by_class_name( class_name )
-    print( len(elems ))
+    #max page
     for elem in elems :
-        arr = elem.find_elements_by_tag_name("a")
-        print( "lenarr:{}".format(len(arr)) )
-        for arr_elem in arr :
-            listSermon.append( arr_elem.get_attribute("href") )
+        elems_a_tag = elem.find_elements_by_tag_name("a")
+        print( len(elems_a_tag) )
+        for elem_a_tag in elems_a_tag :
+            href = elem_a_tag.get_attribute("href")
+            if False :
+                print( href )
+                print( str( href ).split("?")[1] )
+                toks = str(href).split("?")[1]
+                print( toks.split("&")[0].split("=")[1])
+            maxpage = int( str(href).split("?")[1].split("&")[0].split("=")[1] )
+            print( maxpage )
 
-listMissedSermon = []
+    url_for_page = "http://www.shinechurch.or.kr/%EC%98%88%EB%B0%B0%EC%99%80-%EB%A7%90%EC%94%80/%EC%83%88%EB%B2%BD%EC%A0%9C%EC%9E%90%ED%9B%88%EB%A0%A8/?pageid={page}&mod=list"
+    for nPage in range(1, maxpage + 1) :
+        url_target = url_for_page.format(page=nPage)
+        OpenWebPage(wd, url_target, False)
+        class_name="kboard-list"
+        elems = wd.find_elements_by_class_name( class_name )
+        print( len(elems ))
+        for elem in elems :
+            arr = elem.find_elements_by_tag_name("a")
+            print( "lenarr:{}".format(len(arr)) )
+            for arr_elem in arr :
+                listSermon.append( arr_elem.get_attribute("href") )
 
-for sermon in listSermon :
-    OpenWebPage(wd, sermon, False)
-    dicData = {"url":sermon }
-    dicData["title"]= wd.find_elements_by_class_name("kboard-title")[0].text
-    #dicData["txt"] = wd.find_elements_by_class_name("content-view")[0].text
-    #dicData["txt"] = dicData["txt"].replace('"', '""')
-    dicData["txt"] = ""
-    dicData["sDate"] = wd.find_elements_by_class_name("detail-value")[1].text
-    dicData["youtubeURL"] = ""
-    dicData["content"] = ""
-    listMissedSermon.append( dicData )
-    print( dicData)
+    listMissedSermon = []
 
-
-print( listMissedSermon )
-
-revlistMissedSermon = list(reversed(listMissedSermon))
-
-for i in range(0,len(revlistMissedSermon)) :
-    query = "INSERT INTO tUccSermon_DawnJeja( sDate ,url ,title ,biblecontent  ,youtubeURL ,content ,succeed , type, txt ) VALUES ('{sDate}' ,'{url}' ,'{title}' ,'{biblecontent}'  ,'{youtubeURL}' ,'{content}' ,{succeed}, 'text', '{txt}')"
-    dicData = {}
-    dicData["title"] = revlistMissedSermon[i]["title"]
-    dicData["youtubeURL"] = revlistMissedSermon[i]["youtubeURL"]
-    dicData["url"] = revlistMissedSermon[i]["url"]
-
-    listToken = dicData["title"].split("(")
-    szDate = listToken[len(listToken) - 1].replace(")", "")
-    if((szDate ).isdigit() ) :
-        dicData["sDate"] = szDate
-    else :
-        dicData["sDate"] = "20200914"
-    dicData["succeed"] = 1
-    dicData["txt"] = revlistMissedSermon[i]["txt"]
-
-    if( len( revlistMissedSermon[i]["content"] ) < 100 ) :
-        dicData["biblecontent"] = revlistMissedSermon[i]["content"]
-        dicData["content"] = revlistMissedSermon[i]["content"]
-    else:
-        dicData["biblecontent"] = ""
+    for sermon in listSermon :
+        OpenWebPage(wd, sermon, False)
+        dicData = {"url":sermon }
+        dicData["title"]= wd.find_elements_by_class_name("kboard-title")[0].text
+        #dicData["txt"] = wd.find_elements_by_class_name("content-view")[0].text
+        #dicData["txt"] = dicData["txt"].replace('"', '""')
+        dicData["txt"] = ""
+        dicData["sDate"] = wd.find_elements_by_class_name("detail-value")[1].text
+        dicData["youtubeURL"] = ""
         dicData["content"] = ""
-    realQuery = query.format(**dicData)
-    print( realQuery )
-    db2.commitQuery( realQuery )
-    print(dicData)
+
+        query = "select * from tUccSermon_DawnJeja where title='{title}'".format(url=dicData["title"])
+        ret = db2.selectQueryWithRet(query)
+        print(len(ret['data']))
+        if (len(ret['data']) == 0):
+            isUpdateDB = True
+            #listMissedSermon.append({"title": title, "youtubeURL": url, "url": sermon, "content": biblecontent})
+            listMissedSermon.append(dicData)
+        else:
+            break;
 
 
+        print( dicData)
 
+    print( listMissedSermon )
+    revlistMissedSermon = list(reversed(listMissedSermon))
+
+    for i in range(0,len(revlistMissedSermon)) :
+        query = "INSERT INTO tUccSermon_DawnJeja( sDate ,url ,title ,biblecontent  ,youtubeURL ,content ,succeed , type, txt ) VALUES ('{sDate}' ,'{url}' ,'{title}' ,'{biblecontent}'  ,'{youtubeURL}' ,'{content}' ,{succeed}, 'text', '{txt}')"
+        dicData = {}
+        dicData["title"] = revlistMissedSermon[i]["title"]
+        dicData["youtubeURL"] = revlistMissedSermon[i]["youtubeURL"]
+        dicData["url"] = revlistMissedSermon[i]["url"]
+
+        listToken = dicData["title"].split("(")
+        szDate = listToken[len(listToken) - 1].replace(")", "")
+        if((szDate ).isdigit() ) :
+            dicData["sDate"] = szDate
+        else :
+            dicData["sDate"] = "20200914"
+        dicData["succeed"] = 1
+        dicData["txt"] = revlistMissedSermon[i]["txt"]
+
+        if( len( revlistMissedSermon[i]["content"] ) < 100 ) :
+            dicData["biblecontent"] = revlistMissedSermon[i]["content"]
+            dicData["content"] = revlistMissedSermon[i]["content"]
+        else:
+            dicData["biblecontent"] = ""
+            dicData["content"] = ""
+        realQuery = query.format(**dicData)
+        print( realQuery )
+        db2.commitQuery( realQuery )
+        print(dicData)
+
+crawler_dawnjeja()

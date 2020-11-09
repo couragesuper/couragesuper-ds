@@ -103,7 +103,7 @@ isLinux = False
 if( get_platform() == "linux") : isLinux = True
 wd = InitWebDriver( isLinux , isLinux )
 
-isUpdateDB = False
+isUpdateDB = True
 
 def updateSermon() :
     url = "http://www.shinechurch.or.kr/%ec%98%88%eb%b0%b0%ec%99%80-%eb%a7%90%ec%94%80/%eb%8b%b4%ec%9e%84%eb%aa%a9%ec%82%ac-%ec%84%a4%ea%b5%90/?pageid=1&mod=list"
@@ -198,19 +198,22 @@ def updateSermon() :
             dicData["content"] = ""
         realQuery = query.format(**dicData)
         print(realQuery)
-        #db2.commitQuery(realQuery)
+        db.commitQuery(realQuery)
         print(dicData)
 
 
 def updateShineContent() :
     listContent =[{"url":"http://www.shinechurch.or.kr/%EC%83%A4%EC%9D%B8-%EC%BB%A8%ED%85%90%EC%B8%A0/%EC%83%A4%EC%9D%B8%ED%86%A1" , "type":"videopager" }, # shine talk
                   {"url":"http://www.shinechurch.or.kr/%ec%83%a4%ec%9d%b8-%ec%bb%a8%ed%85%90%ec%b8%a0/%ec%83%a4%ec%9d%b8%eb%89%b4%ec%8a%a4", "type":"videopager" }, # shine news
-                   {"url":"http://www.shinechurch.or.kr/%ec%83%a4%ec%9d%b8-%ec%bb%a8%ed%85%90%ec%b8%a0/%ec%98%88%ec%88%98%eb%8b%a4tv", "type":"youtube" }] # yesuda
+                   {"url":"http://www.shinechurch.or.kr/%ec%83%a4%ec%9d%b8-%ec%bb%a8%ed%85%90%ec%b8%a0/%ec%98%88%ec%88%98%eb%8b%a4tv", "type":"youtube" }, # yesuda
+    {"url": "http://www.shinechurch.or.kr/%EC%9E%90%EB%85%80%EB%93%A4-%EC%86%8C%EC%8B%9D/%EC%8B%A0%EC%95%99%EA%B0%84%EC%A6%9D","type": "youtube"},
+    {"url": "http://www.shinechurch.or.kr/%ec%9e%90%eb%85%80%eb%93%a4-%ec%86%8c%ec%8b%9d/%ec%98%81%ec%83%81/","type": "youtube"}]
     url_template = "{url}/?pageid=1&mod=list"
     url_for_page_template = "{url}/?pageid={page}&mod=list"
 
     # all contents
     for i in range(0,3) :
+        print("---------------------\n content = {} \n\n".format(i))
         maxpage = 0
         content_idx = i
 
@@ -276,10 +279,11 @@ def updateShineContent() :
 
                     print( title, sdate )
                     if True :
-                        query = "select * from tUccShineContent where youtubeURL='{url}'".format(url=src)
+                        query = "select * from tUccShineContent where youtubeURL='{youtubeURL}'".format(youtubeURL=src)
                         ret = db2.selectQueryWithRet(query)
                         print(len(ret['data']))
                         if (len(ret['data']) == 0):
+                            print( query )
                             isUpdateDB = True
                             #listMissedSermon.append({"title": title, "youtubeURL": url, "url": sermon, "content": biblecontent})
                             listShineContent.append({"sDate": sdate, "url": url, "title": title, "type": content_idx, "youtubeURL": src,"succeed": 1})
@@ -297,13 +301,13 @@ def updateShineContent() :
                 src = video_elem.find_elements_by_tag_name("iframe")[0].get_attribute( "src" )
 
                 if True:
-                    query = "select * from tUccShineContent where youtubeURL='{url}'".format(url=contenturl)
+                    query = "select * from tUccShineContent where youtubeURL='{url}'".format(url=src)
                     ret = db2.selectQueryWithRet(query)
                     print(len(ret['data']))
                     if (len(ret['data']) == 0):
                         isUpdateDB = True
                         # listMissedSermon.append({"title": title, "youtubeURL": url, "url": sermon, "content": biblecontent})
-                        listShineContent.append({ "sDate":sDate.split(" ")[0].replace("-",""), "url": contenturl, "title": title , "type" : 2 , "youtubeURL": src , "succeed": 1 } )
+                        listShineContent.append({ "sDate":sDate.split(" ")[0].replace("-",""), "url": contenturl, "title": title , "type" : content_idx , "youtubeURL": src , "succeed": 1 } )
                     else:
                         break;
 
@@ -313,12 +317,112 @@ def updateShineContent() :
             query = "INSERT INTO tUccShineContent( sDate , url , title, type , youtubeURL, succeed ) VALUES ( '{sDate}' , '{url}' , '{title}', {type} , '{youtubeURL}' , '{succeed}' )"
             realQuery = query.format(**elem)
             print( realQuery )
-            #db2.commitQuery( realQuery )
+            db.commitQuery( realQuery )
 
-if isUpdateDB == True :
+
+def updateDatabaseDawnJeja() :
+    url = "http://www.shinechurch.or.kr/%EC%98%88%EB%B0%B0%EC%99%80-%EB%A7%90%EC%94%80/%EC%83%88%EB%B2%BD%EC%A0%9C%EC%9E%90%ED%9B%88%EB%A0%A8/?pageid=1&mod=list"
+    maxpage = 0
+
+    OpenWebPage(wd, url, False)
+    elems = wd.find_elements_by_class_name("last-page")
+    print( "maxpage:{}".format( len(elems) ) )
+
+    listSermon = []
+
+    #max page
+    for elem in elems :
+        elems_a_tag = elem.find_elements_by_tag_name("a")
+        print( len(elems_a_tag) )
+        for elem_a_tag in elems_a_tag :
+            href = elem_a_tag.get_attribute("href")
+            if False :
+                print( href )
+                print( str( href ).split("?")[1] )
+                toks = str(href).split("?")[1]
+                print( toks.split("&")[0].split("=")[1])
+            maxpage = int( str(href).split("?")[1].split("&")[0].split("=")[1] )
+            print( maxpage )
+
+    url_for_page = "http://www.shinechurch.or.kr/%EC%98%88%EB%B0%B0%EC%99%80-%EB%A7%90%EC%94%80/%EC%83%88%EB%B2%BD%EC%A0%9C%EC%9E%90%ED%9B%88%EB%A0%A8/?pageid={page}&mod=list"
+    for nPage in range(1, maxpage + 1) :
+        url_target = url_for_page.format(page=nPage)
+        OpenWebPage(wd, url_target, False)
+        class_name="kboard-list"
+        elems = wd.find_elements_by_class_name( class_name )
+        print( len(elems ))
+        for elem in elems :
+            arr = elem.find_elements_by_tag_name("a")
+            print( "lenarr:{}".format(len(arr)) )
+            for arr_elem in arr :
+                listSermon.append( arr_elem.get_attribute("href") )
+
+    listMissedSermon = []
+
+    for sermon in listSermon :
+        OpenWebPage(wd, sermon, False)
+        dicData = {"url":sermon }
+        dicData["title"]= wd.find_elements_by_class_name("kboard-title")[0].text
+        #dicData["txt"] = wd.find_elements_by_class_name("content-view")[0].text
+        #dicData["txt"] = dicData["txt"].replace('"', '""')
+        dicData["txt"] = ""
+        dicData["sDate"] = wd.find_elements_by_class_name("detail-value")[1].text
+        dicData["youtubeURL"] = ""
+        dicData["content"] = ""
+
+        query = "select * from tUccSermon_DawnJeja where title='{title}'".format(title=dicData["title"])
+        ret = db2.selectQueryWithRet(query)
+        print(len(ret['data']))
+        if (len(ret['data']) == 0):
+            isUpdateDB = True
+            #listMissedSermon.append({"title": title, "youtubeURL": url, "url": sermon, "content": biblecontent})
+            listMissedSermon.append(dicData)
+        else:
+            break;
+
+
+        print( dicData)
+
+    print( listMissedSermon )
+    revlistMissedSermon = list(reversed(listMissedSermon))
+
+    for i in range(0,len(revlistMissedSermon)) :
+        query = "INSERT INTO tUccSermon_DawnJeja( sDate ,url ,title ,biblecontent  ,youtubeURL ,content ,succeed , type, txt ) VALUES ('{sDate}' ,'{url}' ,'{title}' ,'{biblecontent}'  ,'{youtubeURL}' ,'{content}' ,{succeed}, 'text', '{txt}')"
+        dicData = {}
+        dicData["title"] = revlistMissedSermon[i]["title"]
+        dicData["youtubeURL"] = revlistMissedSermon[i]["youtubeURL"]
+        dicData["url"] = revlistMissedSermon[i]["url"]
+
+        listToken = dicData["title"].split("(")
+        szDate = listToken[len(listToken) - 1].replace(")", "")
+        if((szDate ).isdigit() ) :
+            dicData["sDate"] = szDate
+        else :
+            dicData["sDate"] = "20201013"
+        dicData["succeed"] = 1
+        dicData["txt"] = revlistMissedSermon[i]["txt"]
+
+        if( len( revlistMissedSermon[i]["content"] ) < 100 ) :
+            dicData["biblecontent"] = revlistMissedSermon[i]["content"]
+            dicData["content"] = revlistMissedSermon[i]["content"]
+        else:
+            dicData["biblecontent"] = ""
+            dicData["content"] = ""
+        realQuery = query.format(**dicData)
+        print( realQuery )
+        db2.commitQuery( realQuery )
+        print(dicData)
+
+updateShineContent()
+updateSermon()
+updateDatabaseDawnJeja()
+
+
+# conv 에서 수행하라.
+if isUpdateDB == False :
 
     now = time.localtime()
-    dbRev = "{}{}{}{}".format(now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour)
+    dbRev = "%04d%02d%02d%02d" %(now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour)
     dbName_Content = "shinechurch_" + dbRev + ".db"
     print(dbName_Content)
     con_cont = sqlite3.connect(dbName_Content)
@@ -395,4 +499,5 @@ if isUpdateDB == True :
                     if (query == "tWordForPraise"): print(dictCreateQueries[query]['insert'].format(**elem))
                     cursor.execute(dictCreateQueries[query]['insert'].format(**elem))
         con_cont.commit()
+
 
