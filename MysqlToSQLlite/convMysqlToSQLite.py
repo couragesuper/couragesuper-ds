@@ -4,7 +4,6 @@ sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 import sqlite3
 
-
 # convertor mysql to sqlite
 # 20200707 : (mthx_2nd)
     # bible , qt , poem , sermon , iword

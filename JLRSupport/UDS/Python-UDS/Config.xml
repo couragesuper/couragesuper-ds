@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<DOIP_UTIL>
+	<!-- IP_ETH : Testor PC's Device (VLan) -->
+	<!-- Port : Doip Port -->
+	<Network PORT="13400" IP_ETH = "169.254.1.231" />
+</DOIP_UTIL>

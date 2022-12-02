@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+
+<Config>
+    <QTMenusLists>
+        <QTMenus name="System">
+            <QTMenu name="Exit" name_short="E&amp;xit" resource="close.png" shortcut="CTRL+Q" desc="Exit the application"  />
+        </QTMenus>
+        <QTMenus name="Window">
+            <QTMenu name="Close" name_short="C&amp;lose" resource="close.png" shortcut="" desc="Close the windows" />
+            <QTMenu name="CloseAll" name_short="Close&amp;all" resource="cancel.png" shortcut="" desc="Close the all windows" />
+            <QTMenu name="Tile" name_short="&amp;Tile" resource="menu.png" shortcut="" desc="Place the position of windows with tiled stlye" />
+            <QTMenu name="Cascade" name_short="&amp;Cascade" resource="browser-50.png" shortcut="" desc="Place the position of windows with cascaded style" />
+        </QTMenus>
+        <QTMenus name="ECU">
+            <QTMenu name="ECU" name_short="ECU" resource="database-5.png" shortcut="CTRL+F+2" desc="To control ECU with SSH" />
+        </QTMenus>
+        <QTMenus name="DEVICE">
+            <QTMenu name="VLX" name_short="VLX" resource="laptop-3.png" shortcut="CTRL+F+3" desc="To control VLX Device" />
+            <QTMenu name="VLXREPLAY" name_short="VLXREPLAY" resource="laptop-3.png" shortcut="CTRL+F+4" desc="To control VLX Replay Device" />
+            <QTMenu name="DTS" name_short="DTS" resource="laptop-4.png" shortcut="CTRL+F+5" desc="To control DTS Device" />
+        </QTMenus>
+        <QTMenus name="DAT">
+            <QTMenu name="DAT" name_short="DAT-V2" resource="database-5.png" shortcut="CTRL+F+6" desc="To control dat advanced" />
+        </QTMenus>
+        <QTMenus name="Help">
+            <QTMenu name="About" name_short="&amp;About" resource="icon2.png" shortcut="CTRL+F+H" desc="About this framework" />
+        </QTMenus>
+    </QTMenusLists>
+    <Geometry>
+        <SizeInfo Width="300" Height="300" Left="300" Right="300" />
+    </Geometry>
+</Config>

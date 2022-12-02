@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<DOIP_UTIL>
+	<!-- IP_ETH : Testor PC's Device (VLan) -->
+	<!-- Port : Doip Port -->
+	<Network PORT="13400" IP_ETH = "169.254.1.231" />
+	<!-- Config : USEGWM -> if value is true then OBD is used for connecting -->
+	<!-- Config : AUTOMATION -> if value is true then work for automation test in dqa  -->
+	<Config ISDEBUG="FALSE" USEGWM="FALSE" AUTOMATION="TRUE" UDSDELAY="0.02" PACKETLEN="4096" DID_TIMEOUT_SEC="60" />
+</DOIP_UTIL>
+
+

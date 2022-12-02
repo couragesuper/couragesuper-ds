@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<ECO>
+    <!-- IGCJ1PHN.BNSJ350 -->
+    <INFO EMC="FALSE" DAB="TRUE" REGION="CHN" IP="34" />
+    <Changing_Details>
+        <!-- UFS 128G : SAA42582501 / JL03NA340ICJLR_220711 / LUN0.bin - 0x801722a3, LUN1.bin - 0xc11443ef, LUN2.bin - 0x32ffc7cf, LUN3.bin - 0xc71daf61, LUN4.bin - 0xe915b438, LUN5.bin - 0xbc7c92dd -->
+        <!-- MICOM : SAA42581501 / JL03NA340IGJLR_220711 / checksum:0x11B5F562 -->
+        <!-- Flash memory (HD-RADIO) : SAA41305801 / C0006.003 / checksum:0x397372A9 -->
+        <!-- Flash memory (Ethernet Switch) : SAA41343601 / v2.6.1.K / checksum:0x1DB33834 -->
+        <!-- GPS : SAA42585201 / v6.09.32 / checksum:0x17DD6321 -->
+        <UFS size = "128G">
+            <SAA value="SAA42582501"/>
+            <BIN value="JL03NA340ICJLR_220711"/>
+            <LUN>
+                <LUN index="1" checksum="0xffffffff"/>
+                <LUN index="2" checksum="0xffffffff"/>
+                <LUN index="3" checksum="0xffffffff"/>
+                <LUN index="4" checksum="0xffffffff"/>
+                <LUN index="5" checksum="0xffffffff"/>
+            </LUN>
+        </UFS>
+        <MICOM value="SAA42581501" BIN= "JL03NA340IGJLR_220711" checksum="0x11B5F562" />
+        <HD_RADIO SAA="SAA42581501" ver = "C0006.003" checksum="EBR31472674" />
+        <ETHERNET SAA="SAA42581501" ver = "v2.6.1.K" checksum="0x1DB33834" />
+        <GPS SAA="SAA42585201" ver = "v6.09.32" checksum="0x17DD6321" />
+    </Changing_Details>
+    <Applicable_Models_Assembly>
+        <!--  UFS 128G : SAA42582501 (EBR34951204) -->
+        <!--  MICOM : SAA42581501 (EBR31472674) -->
+        <!--  Flash memory (HD-RADIO) : SAA41305801 (EBR34969614) -->
+        <!--  Flash memory (Ethernet Switch) : SAA41343601 (EBR31472674) -->
+        <!--  GPS : SAA42585201 (EBR34968814) -->
+        <UFS SAA="SAA42582501" EBR="EBR34951204" />
+        <MICOM SAA="SAA42581501" EBR="EBR31472674" />
+        <HD_RADIO SAA="SAA42581501" EBR="EBR31472674" />
+        <ETHERNET SAA="SAA42581501" EBR="EBR31472674" />
+        <!-- <GPS SAA="SAA42585201" EBR="EBR34968814"  /> GPS has various value of GPS EBR -->
+        <GPS SAA="SAA42585201" EBR="EBR34968814" EBR_NAS="EBR34969614" EBR_CHN="EBR34968815" EBR_DAB_W="EBR34968817" EBR_ROW_WO="EBR34968816" EBR_JAP="EBR86823918" EBR_EMC="EMC" />
+    </Applicable_Models_Assembly>
+    <Remark>
+        <!--  JLR.NAVI.VERSION.READ: "V4.0.5.30_IP34_20220428" -->
+        <!--  JLR.HERE.NAVI.VERSION.READ: "HERE_IP34.4.2022.21.39_20220524" -->
+        <!--  JLR.SKT.NAVI.VERSION.READ: "SK8.6.V0.22.165A.20220425" -->
+        <!--  JLR.NEUSOFT.NAVI.VERSION.READ: "IP34.navi-JLR_2221.3a_stabilization_jlr_IP34-0-g4f004ff.20220527" -->
+        <NAVI ver="V4.0.5.30_IP34_20220428"  here="HERE_IP34.4.2022.21.39_20220524" skt="SK8.6.V0.22.165A.20220425" neusoft="IP34.navi-JLR_2221.3a_stabilization_jlr_IP34-0-g4f004ff.20220527" />
+    </Remark>
+</ECO>

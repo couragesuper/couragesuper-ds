@@ -1,0 +1,170 @@
+D:\work\tools\Python368\python.exe D:/workspace/pycharm/pytorch/couragesuper-ds/JLRSupport/MiniCorvus/JLR_UDS_Automation.py config.xml TestCase.xml
+[JLR UDS Automation] v1.0
+created by couragesuper.kim@lgepartner.com
+JLR_UDS_Automation : Config XML : config.xml
+JLR_UDS_Automation : TestCase XML : TestCase.xml
+[2022-09-27 16:28:07.193648][JLR_UDS][LoadConfigXML][I] Config is loaded with IP:169.254.1.231 , PORT:13400 , USEGWM:True, Automation:True 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][Init][I] initalization
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][I] [Parsing] Rule the XML
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][I] 	node L1 DOIP
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][I] 	node L1 UDS
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][I] [Display Nodes] 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][D] 	DOIPHDR = {'ver': {'len': 1, 'offset': 0}, 'inv_ver': {'len': 1, 'offset': 1}, 'type': {'len': 2, 'offset': 2}, 'len': {'len': 4, 'offset': 4}} 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][D] 	VehIdReq = {'ver': {'len': 1, 'offset': 0}, 'inv_ver': {'len': 1, 'offset': 1}, 'type': {'len': 2, 'offset': 2}, 'len': {'len': 4, 'offset': 4}, 'doiptype': '1'} 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][D] 	VehIdRep = {'ver': {'len': 1, 'offset': 0}, 'inv_ver': {'len': 1, 'offset': 1}, 'type': {'len': 2, 'offset': 2}, 'len': {'len': 4, 'offset': 4}, 'doiptype': '4', 'VIN': {'len': 17, 'offset': 8}, 'LogAddr': {'len': 2, 'offset': 25}, 'eid': {'len': 6, 'offset': 27}, 'gid': {'len': 6, 'offset': 33}} 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][D] 	RoutingActivate = {'ver': {'len': 1, 'offset': 0}, 'inv_ver': {'len': 1, 'offset': 1}, 'type': {'len': 2, 'offset': 2}, 'len': {'len': 4, 'offset': 4}, 'doiptype': '5', 'SourceAddr': {'len': 2, 'offset': 8}, 'ActivationType': {'len': 1, 'offset': 10}, 'ISO': {'len': 4, 'offset': 11}} 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][D] 	RoutingResponse = {'ver': {'len': 1, 'offset': 0}, 'inv_ver': {'len': 1, 'offset': 1}, 'type': {'len': 2, 'offset': 2}, 'len': {'len': 4, 'offset': 4}, 'doiptype': '6', 'LogicalAddr': {'len': 2, 'offset': 8}, 'SourceAddr': {'len': 2, 'offset': 10}, 'ResponseCode': {'len': 1, 'offset': 12}, 'ISO': {'len': 4, 'offset': 13}, 'OEM': {'len': 4, 'offset': 17}} 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][D] 	DiagMsgAck = {'ver': {'len': 1, 'offset': 0}, 'inv_ver': {'len': 1, 'offset': 1}, 'type': {'len': 2, 'offset': 2}, 'len': {'len': 4, 'offset': 4}, 'doiptype': '32770', 'SourceAddr': {'len': 2, 'offset': 8}, 'TargetAddr': {'len': 2, 'offset': 10}, 'AckCode': {'len': 1, 'offset': 12}} 
+[2022-09-27 16:28:07.193648][UDS_Packet_Parser][LoadRuleXML][D] 	udscmd = {'ver': {'len': 1, 'offset': 0}, 'inv_ver': {'len': 1, 'offset': 1}, 'type': {'len': 2, 'offset': 2}, 'len': {'len': 4, 'offset': 4}, 'doiptype': '32769', 'SourceAddr': {'len': 2, 'offset': 8}, 'TargetAddr': {'len': 2, 'offset': 10}, 'UDSCode': {'len': 1, 'offset': 12}, 'UDSSubCode': {'len': 2, 'offset': 13}} 
+[2022-09-27 16:28:07.193648][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.193648][JLR_UDS][Action][I] update action : {'id': '1', 'name': 'CONNECT', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.193648][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '1', 'name': 'CONNECT', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.198629][JLR_UDS][loopFoundDOIP_Send][I] [Send] VEH_ID_REQ by GWM
+[2022-09-27 16:28:07.199618][JLR_UDS][Assertion][I] TestStatus is :{'id': '1', 'name': 'CONNECT', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.200615][JLR_UDS][loopFoundDOIP_Recv][I] [Ignore :: Skipping] Packet is received from self
+[2022-09-27 16:28:07.225343][JLR_UDS][loopFoundDOIP_Send][I] [Send] VEH_ID_REQ by GWM
+[2022-09-27 16:28:07.225343][JLR_UDS][loopFoundDOIP_Recv][I] [Ignore :: Skipping] Packet is received from self
+[2022-09-27 16:28:07.244348][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 4, 'len': 33, 'VIN': bytearray(b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'), 'LogAddr': 5910, 'eid': bytearray(b'\x00\x1a7\xcf\x0c\xde'), 'gid': bytearray(b'\x00\x1a7\xcf\x0c\xde')}
+[2022-09-27 16:28:07.244348][JLR_UDS][loopFoundDOIP_Recv][I] VEH ID Response in GWM
+[2022-09-27 16:28:07.260032][JLR_UDS][loopFoundDOIP_Send][I] [Send] VEH_ID_REQ by GWM
+[2022-09-27 16:28:07.277041][JLR_UDS][runLoopUDS_GWM][I] reset flags and starting GWM's Thread.
+[2022-09-27 16:28:07.277041][JLR_UDS][loopUDS_Send_GWM][I]  [Send] Routing Acitivation Reqeust (GWM)
+[2022-09-27 16:28:07.282306][JLR_UDS][loopUDS_Recv_GWM][I]  Data is received=len:17 data:b'\x02\xfd\x00\x06\x00\x00\x00\t\x0e\x80\x17\x16\x10\x00\x00\x00\x00'
+[2022-09-27 16:28:07.282306][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 6, 'len': 9, 'LogicalAddr': 3712, 'SourceAddr': 5910, 'ResponseCode': 16, 'ISO': 0, 'OEM': 0}
+[2022-09-27 16:28:07.282306][JLR_UDS][loopUDS_Recv_GWM][I]  Routing is activated [GWM].
+[2022-09-27 16:28:07.298002][JLR_UDS][loopFoundDOIP_Send][I] [Send] VEH_ID_REQ by PIVI 
+[2022-09-27 16:28:07.327260][JLR_UDS][loopFoundDOIP_Send][I] [Send] VEH_ID_REQ by PIVI 
+[2022-09-27 16:28:07.327260][JLR_UDS][loopFoundDOIP_Recv][I] [Skipping] self packet is passed 
+.
+[2022-09-27 16:28:07.327260][JLR_UDS][loopFoundDOIP_Recv][I] [Skipping] self packet is passed 
+.
+[2022-09-27 16:28:07.327260][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 4, 'len': 33, 'VIN': bytearray(b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'), 'LogAddr': 6052, 'eid': bytearray(b'H\xc5\x8d\xbc`\xce'), 'gid': bytearray(b'\x00\x1a7\xcf\x0c\xde')}
+[2022-09-27 16:28:07.327260][JLR_UDS][loopFoundDOIP_Recv][I] [Exception] packet is unexpected type.
+[2022-09-27 16:28:07.327260][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 4, 'len': 33, 'VIN': bytearray(b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'), 'LogAddr': 5910, 'eid': bytearray(b'\x00\x1a7\xcf\x0c\xde'), 'gid': bytearray(b'\x00\x1a7\xcf\x0c\xde')}
+[2022-09-27 16:28:07.327260][JLR_UDS][loopFoundDOIP_Recv][I] [Exception] packet is unexpected type.
+[2022-09-27 16:28:07.327260][JLR_UDS][loopFoundDOIP_Recv][I] [Skipping] self packet is passed 
+.
+[2022-09-27 16:28:07.328318][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 4, 'len': 33, 'VIN': bytearray(b'TESTJAGUARXFLG032'), 'LogAddr': 5300, 'eid': bytearray(b'\x02\x00\x86\x9f\xed<'), 'gid': bytearray(b'\x00\x1a7\xcf\x0c\xde')}
+[2022-09-27 16:28:07.328318][JLR_UDS][loopFoundDOIP_Recv][I] [Recv] VEH ID Response in PIVI
+[2022-09-27 16:28:07.333701][JLR_UDS][runLoopUDS][I] Start of Loop
+[2022-09-27 16:28:07.334756][JLR_UDS][loopUDS_Send][I] Start Loop
+[2022-09-27 16:28:07.334756][JLR_UDS][loopUDS_Send][I]  [Send] Routing Acitivation Reqeust
+[2022-09-27 16:28:07.335317][JLR_UDS][loopUDS_Recv][I] Start of Loop
+[2022-09-27 16:28:07.335317][JLR_UDS][runLoopUDS][I] End of Loop
+[2022-09-27 16:28:07.336376][JLR_UDS][loopUDS_Recv][I]  Data is received=len:21 data:b'\x02\xfd\x00\x06\x00\x00\x00\r\x0e\x80\x14\xb4\x10\x00\x00\x00\x00\x00\x00\x00\x00'
+[2022-09-27 16:28:07.336376][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 6, 'len': 13, 'LogicalAddr': 3712, 'SourceAddr': 5300, 'ResponseCode': 16, 'ISO': 0, 'OEM': 0}
+>> >> Routing Activation 
+[2022-09-27 16:28:07.356838][JLR_UDS][loopUDS_Send][I] Routing Activation in Sending Loop
+assertion result : {'id': '1', 'name': 'CONNECT', 'status': 'OK', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.357058][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.357058][JLR_UDS][Action][I] update action : {'id': '2', 'name': 'F111', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.357058][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '2', 'name': 'F111', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.357058][JLR_UDS][Assertion][I] TestStatus is :{'id': '2', 'name': 'F111', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.375182][JLR_UDS][loopUDS_Recv][I] Ready to receive UDS Commands
+[2022-09-27 16:28:07.375465][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.375465][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00\x02\xfd\x80\x01\x00\x00\x00\x1f\x14\xb4\x0e\x80b\xf1\x11\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.375465][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.375465][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 31, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 98, 'UDSSubCode': 61713}
+[2022-09-27 16:28:07.375465][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X62 SubCmd:0XF111 
+[2022-09-27 16:28:07.375465][JLR_UDS][loopUDS_Recv][I] Reading DID Result : b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+assertion result : {'id': '2', 'name': 'F111', 'status': 'FAIL', 'param': True, 'info': {'time': 0.018407106399536133, 'data': b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}}
+[2022-09-27 16:28:07.392462][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.392462][JLR_UDS][Action][I] update action : {'id': '3', 'name': 'F113', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.392462][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '3', 'name': 'F113', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.392462][JLR_UDS][Assertion][I] TestStatus is :{'id': '3', 'name': 'F113', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.409201][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.409201][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00\x02\xfd\x80\x01\x00\x00\x00\x1f\x14\xb4\x0e\x80b\xf1\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.409201][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.409201][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 31, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 98, 'UDSSubCode': 61715}
+[2022-09-27 16:28:07.409201][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X62 SubCmd:0XF113 
+[2022-09-27 16:28:07.409820][JLR_UDS][loopUDS_Recv][I] Reading DID Result : b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+assertion result : {'id': '3', 'name': 'F113', 'status': 'FAIL', 'param': True, 'info': {'time': 0.017357587814331055, 'data': b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}}
+[2022-09-27 16:28:07.435315][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.435315][JLR_UDS][Action][I] update action : {'id': '4', 'name': 'F188', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.435315][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '4', 'name': 'F188', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.435315][JLR_UDS][Assertion][I] TestStatus is :{'id': '4', 'name': 'F188', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.437343][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.437343][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.437343][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.475239][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 31, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 98, 'UDSSubCode': 61832}
+[2022-09-27 16:28:07.475239][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x01\x00\x00\x00\x1f\x14\xb4\x0e\x80b\xf1\x88N8B2-19L312-BA455\x00\x00\x00\x00\x00\x00\x00' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 31, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 98, 'UDSSubCode': 61832} 
+[2022-09-27 16:28:07.475239][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X62 SubCmd:0XF188 
+[2022-09-27 16:28:07.475239][JLR_UDS][loopUDS_Recv][I] Reading DID Result : b'N8B2-19L312-BA455\x00\x00\x00\x00\x00\x00\x00'
+assertion result : {'id': '4', 'name': 'F188', 'status': 'OK', 'param': True, 'info': {'time': 0.03992462158203125, 'data': b'N8B2-19L312-BA455'}}
+[2022-09-27 16:28:07.491806][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.491806][JLR_UDS][Action][I] update action : {'id': '5', 'name': 'F18C', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.491806][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '5', 'name': 'F18C', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.491806][JLR_UDS][Assertion][I] TestStatus is :{'id': '5', 'name': 'F18C', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.507688][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.507688][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00\x02\xfd\x80\x01\x00\x00\x00\x17\x14\xb4\x0e\x80b\xf1\x8cABCD-123456-YYZZ' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.507688][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.507688][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 23, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 98, 'UDSSubCode': 61836}
+[2022-09-27 16:28:07.507688][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X62 SubCmd:0XF18C 
+[2022-09-27 16:28:07.507688][JLR_UDS][loopUDS_Recv][I] Reading DID Result : b'ABCD-123456-YYZZ'
+assertion result : {'id': '5', 'name': 'F18C', 'status': 'OK', 'param': True, 'info': {'time': 0.01588129997253418, 'data': b'ABCD-123456-Y'}}
+[2022-09-27 16:28:07.524435][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.524435][JLR_UDS][Action][I] update action : {'id': '6', 'name': 'F1BE', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.524435][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '6', 'name': 'F1BE', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.524435][JLR_UDS][Assertion][I] TestStatus is :{'id': '6', 'name': 'F1BE', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.541078][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.541078][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00\x02\xfd\x80\x01\x00\x00\x00G\x14\xb4\x0e\x80b\xf1\xbe06.09.32\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.541078][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.541078][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 71, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 98, 'UDSSubCode': 61886}
+[2022-09-27 16:28:07.541078][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X62 SubCmd:0XF1BE 
+[2022-09-27 16:28:07.541078][JLR_UDS][loopUDS_Recv][I] Reading DID Result : b'06.09.32\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+assertion result : {'id': '6', 'name': 'F1BE', 'status': 'OK', 'param': True, 'info': {'time': 0.016643047332763672, 'data': b'06.09.32'}}
+[2022-09-27 16:28:07.559016][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.559016][JLR_UDS][Action][I] update action : {'id': '7', 'name': 'F1BF', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.559016][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '7', 'name': 'F1BF', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.559016][JLR_UDS][Assertion][I] TestStatus is :{'id': '7', 'name': 'F1BF', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.576037][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.576037][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00\x02\xfd\x80\x01\x00\x00\x00G\x14\xb4\x0e\x80b\xf1\xbf2.6.1.K\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.576037][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.576037][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 71, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 98, 'UDSSubCode': 61887}
+[2022-09-27 16:28:07.576037][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X62 SubCmd:0XF1BF 
+[2022-09-27 16:28:07.576037][JLR_UDS][loopUDS_Recv][I] Reading DID Result : b'2.6.1.K\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+assertion result : {'id': '7', 'name': 'F1BF', 'status': 'OK', 'param': True, 'info': {'time': 0.01702117919921875, 'data': b'2.6.1.K'}}
+[2022-09-27 16:28:07.593910][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.593910][JLR_UDS][Action][I] update action : {'id': '8', 'name': 'EXTSESSION', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.593910][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '8', 'name': 'EXTSESSION', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.593910][JLR_UDS][Assertion][I] TestStatus is :{'id': '8', 'name': 'EXTSESSION', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.612886][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.612886][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00\x02\xfd\x80\x01\x00\x00\x00\n\x14\xb4\x0e\x80P\x03\x00\x19\x01\xf4' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.612886][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.612886][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 10, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 80, 'UDSSubCode': 768}
+[2022-09-27 16:28:07.612886][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X50 SubCmd:0X300 
+assertion result : {'id': '8', 'name': 'EXTSESSION', 'status': 'OK', 'param': True, 'info': {'time': 0.018975496292114258}}
+[2022-09-27 16:28:07.629717][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.629717][JLR_UDS][Action][I] update action : {'id': '9', 'name': 'ODST', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.629717][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '9', 'name': 'ODST', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.629717][JLR_UDS][Assertion][I] TestStatus is :{'id': '9', 'name': 'ODST', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.645528][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.645528][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00\x02\xfd\x80\x01\x00\x00\x00\x07\x14\xb4\x0e\x80\x7f1x' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.645528][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.645528][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 7, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 127, 'UDSSubCode': 12664}
+[2022-09-27 16:28:07.645528][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X7F SubCmd:0X3178 
+[2022-09-27 16:28:07.645528][JLR_UDS][loopUDS_Recv][I]  UDS is pending 
+[2022-09-27 16:28:07.731476][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 9, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 113, 'UDSSubCode': 258}
+[2022-09-27 16:28:07.731476][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x01\x00\x00\x00\t\x14\xb4\x0e\x80q\x01\x02\x02j' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 9, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 113, 'UDSSubCode': 258} 
+[2022-09-27 16:28:07.731476][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X71 SubCmd:0X102 
+assertion result : {'id': '9', 'name': 'ODST', 'status': 'OK', 'param': True, 'info': {'time': 0.10175919532775879}}
+[2022-09-27 16:28:07.757827][JLR_UDS][Action][I] READY
+[2022-09-27 16:28:07.757827][JLR_UDS][Action][I] update action : {'id': '10', 'name': 'ODST_RET', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.757827][JLR_UDS][RunTestCase][I] TestStatus is :{'id': '10', 'name': 'ODST_RET', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.757827][JLR_UDS][Assertion][I] TestStatus is :{'id': '10', 'name': 'ODST_RET', 'status': 'RUNNING', 'param': True, 'info': {}}
+[2022-09-27 16:28:07.759863][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0}
+[2022-09-27 16:28:07.759863][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x02\x00\x00\x00\x05\x14\xb4\x0e\x80\x00' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32770, 'len': 5, 'SourceAddr': 5300, 'TargetAddr': 3712, 'AckCode': 0} 
+[2022-09-27 16:28:07.759863][JLR_UDS][loopUDS_Recv][I] Diag Ack : 0
+[2022-09-27 16:28:07.792752][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 12, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 113, 'UDSSubCode': 770}
+[2022-09-27 16:28:07.792752][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'\x02\xfd\x80\x01\x00\x00\x00\x0c\x14\xb4\x0e\x80q\x03\x02\x02j\x91^\x13' -> Parsed Data:{'ret': True, 'ver': 2, 'inv_ver': 253, 'type': 32769, 'len': 12, 'SourceAddr': 5300, 'TargetAddr': 3712, 'UDSCode': 113, 'UDSSubCode': 770} 
+[2022-09-27 16:28:07.792752][JLR_UDS][loopUDS_Recv][I] UDS-Cmd:0X71 SubCmd:0X302 
+assertion result : {'id': '10', 'name': 'ODST_RET', 'status': 'OK', 'param': True, 'info': {'time': 0.03492546081542969}}
+==============
+End of Script
+
+[2022-09-27 16:28:11.013253][JLR_UDS][parseUDSPacket][E] Packet Error(short packet) -> len : 0
+[2022-09-27 16:28:11.013253][JLR_UDS][parseUDSPacket][I] Parsed Data = {'ret': False}
+[2022-09-27 16:28:11.013253][JLR_UDS][loopUDS_Recv][I] Rcv Data=b'' -> Parsed Data:{'ret': False} 
+[2022-09-27 16:28:11.053770][JLR_UDS][loopUDS_Recv][I] End of Loop
+
+Process finished with exit code 0

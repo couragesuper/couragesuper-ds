@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<UDS_DOIP>
+	<CONFIG DEBUG="FALSE" />
+	<DOIP>
+		<PACKET name="Header" desc ="Doip Header" >
+			<FIELD desc="Version" name="ver" len="1"/>
+			<FIELD desc="Inverse version" name="inv_ver" len="1"/>
+			<FIELD desc="Type" name="type" len="2"/>
+			<FIELD desc="Length" name="len" len="4"/>
+		</PACKET>
+	</DOIP>
+	<UDS>
+		<PACKET desc="Vehicle Identification Request" name ="VehIdReq" doiptype="1">
+			<DOIPHEADER/>
+		</PACKET>
+		<PACKET desc="Vehicle Identification Response" name ="VehIdRep" doiptype="4">
+			<DOIPHEADER/>
+			<FIELD desc="VIN" name="VIN" len="17"/>
+			<FIELD desc="Logical Address" name="LogAddr" len="2"/>
+			<FIELD desc="EID" name="eid" len="6"/>
+			<FIELD desc="GID" name="gid" len="6"/>
+		</PACKET>
+		<PACKET desc="Routine Activation" name ="RoutingActivate" doiptype="5">
+			<DOIPHEADER/>
+			<FIELD desc="Source Address" name="SourceAddr" len="2"/>
+			<FIELD desc="Activation Type" name="ActivationType" len="1"/>
+			<FIELD desc="Reserved by ISO" name="ISO" len="4"/>
+		</PACKET>
+		<PACKET desc="Routine Activation" name ="RoutingResponse" doiptype="6" >
+			<DOIPHEADER/>
+			<FIELD desc="Logical address of external tester" name="LogicalAddr" len="2"/>
+			<FIELD desc="Source Address" name="SourceAddr" len="2"/>
+			<FIELD desc="Routing activation response code" name="ResponseCode" len="1"/>
+			<FIELD desc="Reserved by ISO" name="ISO" len="4"/>
+			<FIELD desc="Reserved by OEM" name="OEM" len="4"/>
+		</PACKET>
+		<PACKET desc="Diagnostics Message ACK" name ="DiagMsgAck" doiptype="32770">
+			<DOIPHEADER/>
+			<FIELD desc="Source Address" name="SourceAddr" len="2"/>
+			<FIELD desc="Target Address" name="TargetAddr" len="2"/>
+			<FIELD desc="Ack code" name="AckCode" len="1"/>
+		</PACKET>
+		<PACKET desc="UDS Command" name ="udscmd" doiptype="32769">
+			<DOIPHEADER/>
+			<FIELD desc="Source Address" name="SourceAddr" len="2"/>
+			<FIELD desc="Target Address" name="TargetAddr" len="2"/>
+			<FIELD desc="UDSCode" name="UDSCode" len="1"/>
+			<FIELD desc="UDSSubCode" name="UDSSubCode" len="2"/>
+		</PACKET>
+	</UDS>
+</UDS_DOIP>

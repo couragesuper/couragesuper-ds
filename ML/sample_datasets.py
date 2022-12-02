@@ -1,7 +1,7 @@
 import sklearn.datasets as dataset
 import pandas as pd
 
-
+# sklearn으로 부터 Dataset 수집하기
 
 listDS = []
 listDS.append(  dataset.load_boston() )

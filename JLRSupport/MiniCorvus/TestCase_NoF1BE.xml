@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<TCS>
+	<TC id="1" cmd="CONNECT" param="False" />
+	<TC id="2" cmd="F111" param="True" />
+	<TC id="3" cmd="F113" param="True" />
+	<TC id="4" cmd="F188" param="True" />
+	<TC id="5" cmd="F18C" param="True" />
+	<TC id="7" cmd="F1BF" param="True" />
+	<TC id="8" cmd="EXTSESSION" param="True" />
+	<TC id="9" cmd="ODST" param="True" />
+	<TC id="10" cmd="ODST_RET" param="True" />
+</TCS>
