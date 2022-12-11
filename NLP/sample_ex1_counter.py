@@ -14,7 +14,7 @@ komoran = Komoran()
 komoran.set_user_dictionary('../Data/KomoranDic/user_dictionary.txt')
 
 result = komoran.getTokensList('청하는아이오아이멤버입니다')
-pprint.pprint( result )
+pprint.pprint( result )class
 
 #2.txt_reader
 #iterate with column

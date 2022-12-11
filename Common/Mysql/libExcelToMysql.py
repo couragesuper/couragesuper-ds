@@ -3,6 +3,7 @@ import pandas as pd
 import sys
 import openpyxl
 from pathlib import Path
+sys.path.append("../../Common")
 sys.path.append("../Common")
 from Mysql.libmysql import dbConMysql
 
