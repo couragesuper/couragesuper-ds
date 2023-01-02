@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<DavidLab_Flask_Server>
+<!-- DB Server -->
+<DB user='root' password='karisma*3%7*4' host='mthx.cafe24.com' database='mthx_app' raise_on_warnings="TRUE" />
+<!-- Query -->
+<Queries>
+<!-- Node keyword = "" create_sqlite="" select_mysql="" insert_sqlite="" -->
+
+<Node k = "tbibleContK4"
+  c="CREATE TABLE tBibleContK4 ( book_seq int , book_chap int, book_verse int, book_content text, book_paratitle )"
+  r="select book_seq, book_chap, book_verse, book_paratitle, book_content from tBibleCont_KO;"
+  u='INSERT INTO tBibleContK4 VALUES( {book_seq} , {book_chap}, {book_verse} ,"{book_content}" ,"{book_paratitle}")' insert="True"/>
+
+<Node k = "tbibleContEN"
+  c="CREATE TABLE tbibleContEN ( book_seq int , book_chap int, book_verse int, book_content text, book_paratitle )"
+  r="select book_seq, book_chap, book_verse, book_paratitle, book_content from tBibleCont_EN;"
+  u='INSERT INTO tbibleContEN VALUES( {book_seq} , {book_chap}, {book_verse} ,"{book_content}" ,"{book_paratitle}")' insert="True"/>
+
+<Node k = "tbibleBook"
+  c="CREATE TABLE tbibleBook (biblebook_seq int, biblebook_type text, biblebook_krnm text, biblebook_engnm text, biblebook_krsumnm text)"
+  r="select * from tBibleBook"
+  u='INSERT INTO tbibleBook VALUES( {biblebook_seq} , "{biblebook_type}" ,"{biblebook_krnm}" ,"{biblebook_engnm}", "{biblebook_krsumnm}")' insert="True"/>
+
+<Node k = "tCntChapPerBook"
+  c="CREATE TABLE tCntChapPerBook (book_seq int, cntVerse int)"
+  r="select book_seq , cntVerse from tCntChapPerBook"
+  u="INSERT INTO tCntChapPerBook VALUES( {book_seq} , {cntVerse})" insert="True"/>
+
+<Node k = "tCntVersePerBook"
+  c="CREATE TABLE tCntVersePerBook (book_seq int, cntVerse int)"
+  r="select book_seq , cntVerse from tCntVersePerBook"
+  u="INSERT INTO tCntVersePerBook VALUES( {book_seq} , {cntVerse})" insert="True"/>
+
+<Node k = "tCntVersePerChap"
+  c="CREATE TABLE tCntVersePerChap (book_seq int, book_chap int ,cntVersePerChap int)"
+  r="select book_seq , book_chap , cntVersePerChap from tCntVersePerChap"
+  u="INSERT INTO tCntVersePerChap VALUES( {book_seq} , {book_chap} , {cntVersePerChap})" insert="True"/>
+
+</Queries>
+</DavidLab_Flask_Server>
